@@ -44,6 +44,16 @@ class ChessRenderer {
     this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     this.draggedFrom = null;
     this.selectedSquare = null;
+    this.arrows = [];
+    this.arrowDrawing = null;
+    this.arrowLayer = null;
+    this.arrowMarkerId = "cb-arrowhead-" + containerId;
+    if (this.draggable) {
+      this.container.addEventListener("contextmenu", (e) => e.preventDefault());
+      document.addEventListener("mouseup", (e) => {
+        if (e.button === 2) this.arrowDrawing = null;
+      });
+    }
     this.build();
   }
 
@@ -77,13 +87,20 @@ class ChessRenderer {
           sq.appendChild(f);
         }
 
-        if (this.draggable) this.attachDragHandlers(sq, sqName);
+        if (this.draggable) {
+          this.attachDragHandlers(sq, sqName);
+          this.attachArrowHandlers(sq, sqName);
+        }
         grid.appendChild(sq);
         this.squares[sqName] = sq;
       }
     }
     this.container.appendChild(grid);
     this.setPosition(this.fen);
+    if (this.draggable) {
+      this.buildArrowLayer();
+      this.renderArrows();
+    }
   }
 
   attachDragHandlers(sq, sqName) {
@@ -119,12 +136,14 @@ class ChessRenderer {
       const to = sqName;
       this.draggedFrom = null;
       this.clearHighlights();
+      this.clearArrows();
       if (!from || from === to) return;
       if (this.onMove) this.onMove(from, to);
     });
 
     // Click-to-move
     sq.addEventListener("click", () => {
+      this.clearArrows();
       if (this.selectedSquare && this.selectedSquare !== sqName) {
         const from = this.selectedSquare;
         this.clearSelection();
@@ -144,6 +163,83 @@ class ChessRenderer {
   }
 
   setLegalMovesProvider(fn) { this.legalMovesFor = fn; }
+
+  // Click derecho + arrastre: dibuja flechas de análisis (no afecta la partida)
+  attachArrowHandlers(sq, sqName) {
+    sq.addEventListener("mousedown", (e) => {
+      if (e.button !== 2) return;
+      e.preventDefault();
+      this.arrowDrawing = sqName;
+    });
+    sq.addEventListener("mouseup", (e) => {
+      if (e.button !== 2 || !this.arrowDrawing) return;
+      const from = this.arrowDrawing;
+      this.arrowDrawing = null;
+      if (from === sqName) return;
+      this.toggleArrow(from, sqName);
+    });
+  }
+
+  buildArrowLayer() {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "cb__arrows");
+    svg.setAttribute("viewBox", "0 0 8 8");
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.innerHTML = `<defs>
+      <marker id="${this.arrowMarkerId}" markerWidth="2.6" markerHeight="2.6"
+              refX="1.3" refY="1.3" orient="auto-start-reverse" markerUnits="strokeWidth">
+        <path d="M0,0 L2.6,1.3 L0,2.6 Z" fill="rgba(21, 120, 27, 0.85)" />
+      </marker>
+    </defs>`;
+    this.container.appendChild(svg);
+    this.arrowLayer = svg;
+  }
+
+  squareCenter(sqName) {
+    const fileIdx = FILES.indexOf(sqName[0]);
+    const rank = parseInt(sqName.slice(1), 10);
+    if (fileIdx < 0 || !rank) return null;
+    const visualCol = this.flipped ? 7 - fileIdx : fileIdx;
+    const visualRow = this.flipped ? rank - 1 : 8 - rank;
+    return { x: visualCol + 0.5, y: visualRow + 0.5 };
+  }
+
+  toggleArrow(from, to) {
+    const idx = this.arrows.findIndex((a) => a.from === from && a.to === to);
+    if (idx >= 0) this.arrows.splice(idx, 1);
+    else this.arrows.push({ from, to });
+    this.renderArrows();
+  }
+
+  clearArrows() {
+    if (this.arrows.length === 0) return;
+    this.arrows = [];
+    this.renderArrows();
+  }
+
+  renderArrows() {
+    if (!this.arrowLayer) return;
+    this.arrowLayer.querySelectorAll(".cb__arrow-line").forEach((l) => l.remove());
+    const ns = "http://www.w3.org/2000/svg";
+    this.arrows.forEach(({ from, to }) => {
+      const a = this.squareCenter(from);
+      const b = this.squareCenter(to);
+      if (!a || !b) return;
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const pullback = 0.34;
+      const endX = b.x - (dx / dist) * pullback;
+      const endY = b.y - (dy / dist) * pullback;
+      const line = document.createElementNS(ns, "line");
+      line.setAttribute("x1", a.x);
+      line.setAttribute("y1", a.y);
+      line.setAttribute("x2", endX);
+      line.setAttribute("y2", endY);
+      line.setAttribute("class", "cb__arrow-line");
+      line.setAttribute("marker-end", `url(#${this.arrowMarkerId})`);
+      this.arrowLayer.appendChild(line);
+    });
+  }
 
   highlightLegalMoves(from) {
     this.clearHighlights();
