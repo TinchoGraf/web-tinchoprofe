@@ -1,11 +1,8 @@
 # Tinchograf — Cómo correr la página
 
-## 🟢 Con servidor local (recomendado para desarrollo)
+## 🟢 Con servidor local (para desarrollo)
 
-1. Abrí PowerShell (o la terminal de VS Code) en la carpeta del proyecto:
-   ```
-   cd "C:\Users\Martin\Downloads\proyecto pagina web tinchoprofe"
-   ```
+1. Abrí la terminal de VS Code (o PowerShell) en la carpeta del proyecto.
 
 2. Levantá el servidor:
    ```
@@ -21,25 +18,27 @@ Para cerrar el servidor: `Ctrl + C` en la terminal.
 
 ---
 
-## 🌐 Cuando publiques online
-
-Cuando subas la página a un hosting (GitHub Pages, Netlify, Vercel, etc.),
-funciona sin más: el CDN de chess.js va a cargar bien porque ya no estás
-en `file://`.
-
----
-
 ## Estructura de archivos
 
 ```
 tu-carpeta/
 ├── index.html
 ├── styles.css
-└── script.js
+├── script.js
+├── chess.min.js    ← motor de ajedrez (local, no depende de internet)
+└── README.md
 ```
 
-`chess.js` (el motor de ajedrez) se carga desde un CDN público
-(jsdelivr), no hace falta tenerlo localmente.
+`chess.min.js` está incluido en el repo. La página funciona sin internet
+salvo por las fuentes de Google (Cormorant Garamond, Inter Tight), que
+si no cargan, el navegador usa fuentes de fallback pero se ve casi igual.
+
+---
+
+## 🌐 Cuando publiques online
+
+Cuando subas la página a un hosting (GitHub Pages, Netlify, Vercel, etc.),
+funciona sin más — no hace falta configurar nada extra.
 
 ---
 
