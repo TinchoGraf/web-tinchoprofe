@@ -9,6 +9,13 @@ const PIECE_UNICODE = {
 };
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
+const ARROW_COLORS = {
+  green: "rgba(21, 120, 27, 0.85)",
+  yellow: "rgba(214, 158, 20, 0.9)",
+  red: "rgba(178, 34, 34, 0.85)",
+  blue: "rgba(30, 100, 200, 0.85)"
+};
+
 function fenToBoard(fen) {
   const rows = fen.split(" ")[0].split("/");
   const board = [];
@@ -97,10 +104,8 @@ class ChessRenderer {
     }
     this.container.appendChild(grid);
     this.setPosition(this.fen);
-    if (this.draggable) {
-      this.buildArrowLayer();
-      this.renderArrows();
-    }
+    this.buildArrowLayer();
+    this.renderArrows();
   }
 
   attachDragHandlers(sq, sqName) {
@@ -185,12 +190,12 @@ class ChessRenderer {
     svg.setAttribute("class", "cb__arrows");
     svg.setAttribute("viewBox", "0 0 8 8");
     svg.setAttribute("preserveAspectRatio", "none");
-    svg.innerHTML = `<defs>
-      <marker id="${this.arrowMarkerId}" markerWidth="2.6" markerHeight="2.6"
+    const markers = Object.entries(ARROW_COLORS).map(([name, value]) => `
+      <marker id="${this.arrowMarkerId}-${name}" markerWidth="2.6" markerHeight="2.6"
               refX="1.3" refY="1.3" orient="auto-start-reverse" markerUnits="strokeWidth">
-        <path d="M0,0 L2.6,1.3 L0,2.6 Z" fill="rgba(21, 120, 27, 0.85)" />
-      </marker>
-    </defs>`;
+        <path d="M0,0 L2.6,1.3 L0,2.6 Z" fill="${value}" />
+      </marker>`).join("");
+    svg.innerHTML = `<defs>${markers}</defs>`;
     this.container.appendChild(svg);
     this.arrowLayer = svg;
   }
@@ -207,7 +212,13 @@ class ChessRenderer {
   toggleArrow(from, to) {
     const idx = this.arrows.findIndex((a) => a.from === from && a.to === to);
     if (idx >= 0) this.arrows.splice(idx, 1);
-    else this.arrows.push({ from, to });
+    else this.arrows.push({ from, to, color: "green" });
+    this.renderArrows();
+  }
+
+  // Flechas fijas (no interactivas), p.ej. para anotar ideas en una partida cargada
+  setArrows(list) {
+    this.arrows = Array.isArray(list) ? list.slice() : [];
     this.renderArrows();
   }
 
@@ -221,10 +232,11 @@ class ChessRenderer {
     if (!this.arrowLayer) return;
     this.arrowLayer.querySelectorAll(".cb__arrow-line").forEach((l) => l.remove());
     const ns = "http://www.w3.org/2000/svg";
-    this.arrows.forEach(({ from, to }) => {
+    this.arrows.forEach(({ from, to, color }) => {
       const a = this.squareCenter(from);
       const b = this.squareCenter(to);
       if (!a || !b) return;
+      const colorName = ARROW_COLORS[color] ? color : "green";
       const dx = b.x - a.x, dy = b.y - a.y;
       const dist = Math.hypot(dx, dy) || 1;
       const pullback = 0.34;
@@ -236,7 +248,8 @@ class ChessRenderer {
       line.setAttribute("x2", endX);
       line.setAttribute("y2", endY);
       line.setAttribute("class", "cb__arrow-line");
-      line.setAttribute("marker-end", `url(#${this.arrowMarkerId})`);
+      line.setAttribute("stroke", ARROW_COLORS[colorName]);
+      line.setAttribute("marker-end", `url(#${this.arrowMarkerId}-${colorName})`);
       this.arrowLayer.appendChild(line);
     });
   }
@@ -360,6 +373,28 @@ document.addEventListener("DOMContentLoaded", () => {
 1. e4 c5 2. Nf3 e6 3. d4 cxd4 4. Nxd4 a6 5. Bd3 Nf6 6. O-O Qc7 7. Qe2 d6 8. c4 g6 9. Nc3 Bg7 10. Rd1 O-O *`
   };
 
+  // Anotaciones por partida: flechas de colores + leyenda, ancladas a una jugada (ply) puntual.
+  // Se editan a mano al subir cada partida real. "ply" es el número de medio-movimiento
+  // (0 = posición inicial, 1 = después de la primera jugada de blancas, etc.)
+  const GAME_ANNOTATIONS = {
+    "mejor-1": {
+      20: {
+        arrows: [
+          { from: "g2", to: "g4", color: "green" },
+          { from: "h2", to: "h4", color: "green" },
+          { from: "f3", to: "f4", color: "yellow" },
+          { from: "b7", to: "b5", color: "red" },
+          { from: "d7", to: "c5", color: "red" }
+        ],
+        legend: [
+          { color: "green", label: "Blancas: ataque en el flanco rey (g4-h4-g5)" },
+          { color: "yellow", label: "Plan alternativo: expansión central con f4-f5" },
+          { color: "red", label: "Ojo con el contrajuego de negras en el flanco dama (b5-b4, Nc5)" }
+        ]
+      }
+    }
+  };
+
   const boards = {};
 
   function setupGameBoard(id) {
@@ -383,12 +418,34 @@ document.addEventListener("DOMContentLoaded", () => {
     refreshGameBoard(id);
   }
 
+  function renderLegend(id, legend) {
+    const el = document.getElementById(`legend-${id}`);
+    if (!el) return;
+    el.innerHTML = "";
+    (legend || []).forEach(({ color, label }) => {
+      const item = document.createElement("div");
+      item.className = "game__legend-item";
+      const dot = document.createElement("span");
+      dot.className = "game__legend-dot";
+      dot.style.background = ARROW_COLORS[color] || ARROW_COLORS.green;
+      const text = document.createElement("span");
+      text.textContent = label;
+      item.appendChild(dot);
+      item.appendChild(text);
+      el.appendChild(item);
+    });
+  }
+
   function refreshGameBoard(id) {
     const state = boards[id];
     if (!state) return;
     const pos = state.positions[state.ply];
     state.renderer.setPosition(pos.fen);
     state.renderer.highlightLastMove(pos.from, pos.to);
+
+    const annotation = GAME_ANNOTATIONS[id] && GAME_ANNOTATIONS[id][state.ply];
+    state.renderer.setArrows(annotation ? annotation.arrows : []);
+    renderLegend(id, annotation ? annotation.legend : []);
 
     const label = document.getElementById(`move-${id}`);
     if (!label) return;
