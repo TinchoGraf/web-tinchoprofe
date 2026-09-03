@@ -118,6 +118,7 @@ class ChessRenderer {
       const from = this.draggedFrom;
       const to = sqName;
       this.draggedFrom = null;
+      this.clearHighlights();
       if (!from || from === to) return;
       if (this.onMove) this.onMove(from, to);
     });
