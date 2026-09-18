@@ -373,6 +373,100 @@ window.PARTIDAS_MODELO = [
 1. e4 c5 2. Nf3 Nc6 3. Bb5 g6 4. O-O Bg7 5. Re1 d6 6. c3 e5 7. d4 cxd4 8. cxd4 exd4 9. Nxd4 Ne7 10. Bg5 f6 11. Bh4 O-O 12. Nc3 Ne5 13. Ba4 a6 14. Bb3+ Kh8 15. Nd5 g5 16. Bg3 b5 17. Rc1 Bb7 18. Nc7 Bc8 19. Nce6 Bxe6 20. Nxe6 Qb6 21. Nxf8 Rxf8 22. Bxe5 fxe5 23. Qe2 Ng6 24. g3 g4 25. Bd5 h5 26. Rc6 Qd4 27. Rd1 Qb4 28. a3 Qa5 29. Rdc1 Bh6 30. R1c2 Ne7 31. Rxd6 Bg5 32. Be6 b4 33. Rxa6 Qd8 34. Ra7 b3 35. Rcc7 Qd6 36. h4 Bf6 37. Qe3 Kg7 38. Rd7 1-0`,
     link_chesscom: "https://www.chess.com/analysis/collection/posicionales-tempo-3ATNub8bp/54wa6rsCN2/analysis?move=33",
     link_lichess: null
+  },
+  {
+    id: "rey-centro-davidalhesa-2024",
+    concepto: "Atacar al rey en el centro",
+    titulo: "La importancia de atacar al rey cuando no lo dejamos enrocar",
+    resultado: "1-0",
+    color_tincho: "blancas",
+    oponente: "Davidalhesa2007 (1972)",
+    oponente_titulo: "CM",
+    fecha: "2024-10-05",
+    control: "Blitz 3+0",
+    narracion:
+      "Partida jugada contra un Candidato a Maestro (CM) — los conceptos que estamos viendo aplican también en niveles altos. El negro juega 15... Ce7 pensando en desarrollar, pero la única pieza que defiende el caballo es el rey en e8. Cambio en e7 fuerza al rey a recapturar y a partir de ahí no lo dejamos enrocar nunca más. Con las columnas centrales abiertas, torres y dama entrando, y sus piezas del flanco de dama sin desarrollar, la presión se vuelve insostenible. Abandona antes de perder material decisivo.",
+    momento_clave: {
+      ply: 30,
+      comentario:
+        "El negro acaba de jugar 15... Ce7. El único defensor es el rey en e8 — la dama en c7 no ayuda porque su propio peón de d7 le bloquea la diagonal. Al capturar el caballo, el rey queda obligado a recapturar y a comerse el resto de la partida en el centro."
+    },
+    annotations: [
+      {
+        ply: 30,
+        titulo: "Un defensor solo: el rey",
+        texto: "15... Ce7. El caballo se desarrolla pero cae en una casilla con un solo defensor real — el rey en e8. La dama en c7 no llega a defender porque tiene bloqueada la diagonal por su propio peón de d7. Al cambiar, el rey queda forzado a recapturar y no puede enrocar nunca más.",
+        arrows: [
+          { from: "e8", to: "e7", color: "muted" },
+          { from: "g5", to: "e7", color: "warning" }
+        ],
+        highlights: [
+          { square: "e7", color: "accent" },
+          { square: "e8", color: "warning" },
+          { square: "d7", color: "muted" }
+        ]
+      },
+      {
+        ply: 31,
+        titulo: "El cambio que sella la posición",
+        texto: "16. Axe7. Cambiamos alfil por caballo. El negro no tiene alternativa aceptable: si no recaptura pierde una pieza limpia. Con el rey siendo el único defensor, la recaptura la hace él mismo.",
+        arrows: [{ from: "g5", to: "e7", color: "accent" }],
+        highlights: [{ square: "e7", color: "accent" }]
+      },
+      {
+        ply: 32,
+        titulo: "Rey en el centro, sin enroque posible",
+        texto: "16... Rxe7. El rey queda en e7. Ya no puede enrocar — perdió ese derecho al mover el rey. Y está expuesto en el centro del tablero, justo donde pronto van a abrirse las columnas. A partir de acá el plan blanco es simple: abrir el centro y meter todas las piezas.",
+        highlights: [
+          { square: "e7", color: "warning" },
+          { square: "e8", color: "muted" },
+          { square: "d8", color: "muted" }
+        ]
+      },
+      {
+        ply: 33,
+        titulo: "Abrir el centro",
+        texto: "17. f5! Se empieza a abrir el juego para las columnas centrales. Amenaza f6+ desalojando al rey, y prepara la entrada de la torre por la columna d y la dama por la diagonal. El negro no tiene tiempo para desarrollar el alfil de c8 ni la torre de a8 — están mirando la partida desde afuera.",
+        arrows: [
+          { from: "f4", to: "f5", color: "accent" },
+          { from: "d1", to: "d8", color: "muted" }
+        ],
+        highlights: [
+          { square: "f5", color: "accent" },
+          { square: "e7", color: "warning" }
+        ]
+      },
+      {
+        ply: 39,
+        titulo: "Colapso: el ataque se vuelve imparable",
+        texto: "20. Dg3. Torre en d1, dama entrando por la diagonal a h4, caballo activo en b4, rey negro atrapado en el centro. El alfil de c8 y la torre de a8 nunca jugaron. En la próxima jugada 21. Dh4 la presión es total — cae material y no hay defensa. El negro abandona. Todo el ataque nació de aprovechar una sola casilla débilmente defendida en la jugada 15.",
+        arrows: [
+          { from: "d3", to: "g3", color: "accent" },
+          { from: "g3", to: "h4", color: "muted" },
+          { from: "d1", to: "d8", color: "muted" }
+        ],
+        highlights: [
+          { square: "e7", color: "warning" },
+          { square: "a8", color: "muted" },
+          { square: "c8", color: "muted" }
+        ]
+      }
+    ],
+    pgn: `[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2024.10.05"]
+[White "TinchoGraf"]
+[Black "Davidalhesa2007"]
+[Result "1-0"]
+[WhiteElo "1929"]
+[BlackElo "1972"]
+[ECO "B40"]
+[TimeControl "180"]
+[Termination "TinchoGraf won by resignation"]
+
+1. e4 e6 2. Nf3 c5 3. d4 cxd4 4. Nxd4 a6 5. c4 Nf6 6. Nc3 Qc7 7. Be3 Bb4 8. Bd3 Nc6 9. Nc2 Bxc3+ 10. bxc3 Ne5 11. O-O Nxc4 12. Bg5 Ne5 13. f4 Nxd3 14. Qxd3 Ng8 15. Rad1 Ne7 16. Bxe7 Kxe7 17. f5 e5 18. Nb4 Qc5+ 19. Kh1 Rd8 20. Qg3 Kf8 21. Qh4 1-0`,
+    link_chesscom: "https://www.chess.com/analysis/collection/rey-en-el-centro-vs-cm-21Yb8HBn6/2VY6UEUft2/analysis?move=29",
+    link_lichess: null
   }
 
   // ------------------------------------------------------------------
