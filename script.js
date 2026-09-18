@@ -46,7 +46,7 @@ class ChessRenderer {
     this.container = document.getElementById(containerId);
     if (!this.container) return;
     this.container.classList.add("cb");
-    this.flipped = false;
+    this.flipped = options.flipped || false;
     this.draggable = options.draggable || false;
     this.onMove = options.onMove || null;
     this.canDragPiece = options.canDragPiece || null;
@@ -414,16 +414,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // PGNs de ejemplo (reemplazar por partidas reales)
   const PGNS = {
-    "ejemplo-1": `[Event "Ejemplo 1"]
-[White "Tinchograf"]
-[Black "Oponente"]
-
-1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 4. Ba4 Nf6 5. O-O Be7 6. Re1 b5 7. Bb3 d6 8. c3 O-O 9. h3 Nb8 10. d4 Nbd7 *`,
-    "ejemplo-2": `[Event "Ejemplo 2"]
-[White "Tinchograf"]
-[Black "Oponente"]
-
-1. d4 Nf6 2. c4 g6 3. Nc3 Bg7 4. e4 d6 5. Nf3 O-O 6. Be2 e5 7. O-O Nc6 8. d5 Ne7 9. Ne1 Nd7 10. Nd3 f5 *`,
     "mejor-1": `[Event "Mejor 1"]
 [White "Tinchograf"]
 [Black "Oponente"]
@@ -511,23 +501,172 @@ document.addEventListener("DOMContentLoaded", () => {
     renderLegend(id, annotation ? annotation.legend : []);
 
     const label = document.getElementById(`move-${id}`);
-    if (!label) return;
-    if (state.ply === 0) {
-      label.textContent = "Posición inicial";
-    } else {
-      const moveNum = Math.ceil(state.ply / 2);
-      const san = state.sanMoves[state.ply - 1];
-      const isWhite = state.ply % 2 === 1;
-      label.textContent = `${moveNum}${isWhite ? "." : "..."} ${san}`;
+    if (label) {
+      if (state.ply === 0) {
+        label.textContent = "Posición inicial";
+      } else {
+        const moveNum = Math.ceil(state.ply / 2);
+        const san = state.sanMoves[state.ply - 1];
+        const isWhite = state.ply % 2 === 1;
+        label.textContent = `${moveNum}${isWhite ? "." : "..."} ${san}`;
+      }
+    }
+
+    const keyMomentBox = document.getElementById(`keymoment-${id}`);
+    if (keyMomentBox) {
+      const atKeyMoment = state.keyMomentPly !== undefined && state.ply === state.keyMomentPly;
+      keyMomentBox.classList.toggle("game__key-moment--visible", atKeyMoment);
     }
   }
 
-  ["ejemplo-1", "ejemplo-2", "mejor-1", "mejor-2"].forEach(setupGameBoard);
+  ["mejor-1", "mejor-2"].forEach(setupGameBoard);
 
-  document.querySelectorAll(".ctrl[data-target]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const id = btn.dataset.target;
-      const action = btn.dataset.action;
+  /* ============================================
+     PARTIDAS MODELO: tabs por concepto + cards dinámicas
+     Fuente de datos: window.PARTIDAS_MODELO (partidas.js)
+     ============================================ */
+  function escapeHtml(str) {
+    return String(str ?? "").replace(/[&<>"']/g, (ch) => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]
+    ));
+  }
+
+  function formatFechaEs(iso) {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-").map(Number);
+    if (!y || !m || !d) return iso;
+    const date = new Date(Date.UTC(y, m - 1, d));
+    return date.toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+  }
+
+  function createPartidaCard(partida) {
+    const article = document.createElement("article");
+    article.className = "game";
+    article.dataset.pgn = partida.id;
+
+    const colorLabel = partida.color_tincho === "negras" ? "Negras" : "Blancas";
+    const metaParts = [`vs. ${partida.oponente || "Oponente"}`];
+    if (partida.control) metaParts.push(partida.control);
+    const fechaTxt = formatFechaEs(partida.fecha);
+    if (fechaTxt) metaParts.push(fechaTxt);
+
+    const links = [];
+    if (partida.link_chesscom) links.push(`<a href="${partida.link_chesscom}" target="_blank" rel="noopener">chess.com ↗</a>`);
+    if (partida.link_lichess) links.push(`<a href="${partida.link_lichess}" target="_blank" rel="noopener">lichess ↗</a>`);
+
+    article.innerHTML = `
+      <div class="game__board" id="board-${partida.id}"></div>
+      <div class="game__panel">
+        <span class="game__tag">${escapeHtml(partida.concepto)} · ${colorLabel}</span>
+        <h3 class="game__title">${escapeHtml(partida.titulo)}</h3>
+        <p class="game__meta">${escapeHtml(metaParts.join(" · "))}</p>
+        ${partida.narracion ? `<p class="game__narrative">${escapeHtml(partida.narracion)}</p>` : ""}
+        <div class="game__controls">
+          <button class="ctrl" data-action="start" data-target="${partida.id}" aria-label="Ir al inicio">⏮</button>
+          <button class="ctrl" data-action="prev" data-target="${partida.id}" aria-label="Jugada anterior">◀</button>
+          <button class="ctrl" data-action="next" data-target="${partida.id}" aria-label="Jugada siguiente">▶</button>
+          <button class="ctrl" data-action="end" data-target="${partida.id}" aria-label="Ir al final">⏭</button>
+        </div>
+        ${partida.momento_clave ? `
+        <div class="game__keymoment-row">
+          <button class="btn btn--ghost-sm game__keymoment-btn" data-target="${partida.id}">Ir al momento clave</button>
+        </div>` : ""}
+        <p class="game__move" id="move-${partida.id}">Posición inicial</p>
+        <div class="game__legend" id="legend-${partida.id}"></div>
+        ${partida.momento_clave ? `
+        <div class="game__key-moment" id="keymoment-${partida.id}">
+          <p>${escapeHtml(partida.momento_clave.comentario)}</p>
+        </div>` : ""}
+        <div class="game__links">${links.join("")}</div>
+      </div>
+    `;
+    return article;
+  }
+
+  function setupPartidaBoard(partida) {
+    const replay = new Chess();
+    if (!replay.load_pgn(partida.pgn)) return;
+    const history = replay.history({ verbose: true });
+
+    const tmp = new Chess();
+    const positions = [{ fen: tmp.fen(), from: null, to: null }];
+    const sanMoves = [];
+    history.forEach((mv) => {
+      tmp.move(mv);
+      positions.push({ fen: tmp.fen(), from: mv.from, to: mv.to });
+      sanMoves.push(mv.san);
+    });
+
+    // El tablero se ve desde el ángulo de Tincho: su color siempre queda abajo.
+    const flipped = partida.color_tincho === "negras";
+    const renderer = new ChessRenderer(`board-${partida.id}`, { draggable: false, flipped });
+    boards[partida.id] = {
+      renderer,
+      positions,
+      sanMoves,
+      ply: 0,
+      keyMomentPly: partida.momento_clave ? partida.momento_clave.ply : undefined
+    };
+    refreshGameBoard(partida.id);
+  }
+
+  function initPartidasModelo() {
+    const tabsContainer = document.getElementById("concept-tabs");
+    const gamesContainer = document.getElementById("games-container");
+    if (!tabsContainer || !gamesContainer) return;
+
+    const partidas = Array.isArray(window.PARTIDAS_MODELO) ? window.PARTIDAS_MODELO : [];
+    if (partidas.length === 0) {
+      tabsContainer.innerHTML = "";
+      gamesContainer.innerHTML = `<p class="section__intro" style="margin:0;">Todavía no hay partidas cargadas.</p>`;
+      return;
+    }
+
+    const conceptos = [];
+    partidas.forEach((p) => {
+      if (!conceptos.includes(p.concepto)) conceptos.push(p.concepto);
+    });
+
+    let currentIds = [];
+
+    function renderConcepto(concepto) {
+      currentIds.forEach((id) => delete boards[id]);
+      currentIds = [];
+      gamesContainer.innerHTML = "";
+      partidas
+        .filter((p) => p.concepto === concepto)
+        .forEach((partida) => {
+          gamesContainer.appendChild(createPartidaCard(partida));
+          setupPartidaBoard(partida);
+          currentIds.push(partida.id);
+        });
+    }
+
+    tabsContainer.innerHTML = "";
+    conceptos.forEach((concepto, idx) => {
+      const tab = document.createElement("button");
+      tab.type = "button";
+      tab.className = "concept-tab" + (idx === 0 ? " concept-tab--active" : "");
+      tab.textContent = concepto;
+      tab.dataset.concepto = concepto;
+      tab.addEventListener("click", () => {
+        tabsContainer.querySelectorAll(".concept-tab").forEach((t) => t.classList.remove("concept-tab--active"));
+        tab.classList.add("concept-tab--active");
+        renderConcepto(concepto);
+      });
+      tabsContainer.appendChild(tab);
+    });
+
+    renderConcepto(conceptos[0]);
+  }
+
+  initPartidasModelo();
+
+  document.addEventListener("click", (e) => {
+    const ctrlBtn = e.target.closest(".ctrl[data-target]");
+    if (ctrlBtn) {
+      const id = ctrlBtn.dataset.target;
+      const action = ctrlBtn.dataset.action;
       const state = boards[id];
       if (!state) return;
       if (action === "start") state.ply = 0;
@@ -535,7 +674,17 @@ document.addEventListener("DOMContentLoaded", () => {
       else if (action === "prev" && state.ply > 0) state.ply--;
       else if (action === "next" && state.ply < state.positions.length - 1) state.ply++;
       refreshGameBoard(id);
-    });
+      return;
+    }
+
+    const keyBtn = e.target.closest(".game__keymoment-btn[data-target]");
+    if (keyBtn) {
+      const id = keyBtn.dataset.target;
+      const state = boards[id];
+      if (!state || state.keyMomentPly === undefined) return;
+      state.ply = state.keyMomentPly;
+      refreshGameBoard(id);
+    }
   });
 
   // =========================================================

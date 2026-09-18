@@ -227,49 +227,8 @@
       con análisis.
     </p>
 
-    <div class="games">
-      <article class="game" data-pgn="ejemplo1">
-        <div class="game__board" id="board-ejemplo-1"></div>
-        <div class="game__panel">
-          <span class="game__tag">Apertura — plan</span>
-          <h3 class="game__title">Ejemplo: estructura sobre teoría</h3>
-          <p class="game__meta">Tinchograf vs. Oponente · Online</p>
-          <div class="game__controls">
-            <button class="ctrl" data-action="start" data-target="ejemplo-1" aria-label="Ir al inicio">⏮</button>
-            <button class="ctrl" data-action="prev" data-target="ejemplo-1" aria-label="Jugada anterior">◀</button>
-            <button class="ctrl" data-action="next" data-target="ejemplo-1" aria-label="Jugada siguiente">▶</button>
-            <button class="ctrl" data-action="end" data-target="ejemplo-1" aria-label="Ir al final">⏭</button>
-          </div>
-          <p class="game__move" id="move-ejemplo-1">Posición inicial</p>
-          <div class="game__legend" id="legend-ejemplo-1"></div>
-          <div class="game__links">
-            <a href="https://www.chess.com/member/tinchograf" target="_blank" rel="noopener">chess.com ↗</a>
-            <a href="https://lichess.org/@/tinchograf" target="_blank" rel="noopener">lichess ↗</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="game" data-pgn="ejemplo2">
-        <div class="game__board" id="board-ejemplo-2"></div>
-        <div class="game__panel">
-          <span class="game__tag">Mediojuego — desbalance</span>
-          <h3 class="game__title">Ejemplo: leer la posición</h3>
-          <p class="game__meta">Tinchograf vs. Oponente · Online</p>
-          <div class="game__controls">
-            <button class="ctrl" data-action="start" data-target="ejemplo-2" aria-label="Ir al inicio">⏮</button>
-            <button class="ctrl" data-action="prev" data-target="ejemplo-2" aria-label="Jugada anterior">◀</button>
-            <button class="ctrl" data-action="next" data-target="ejemplo-2" aria-label="Jugada siguiente">▶</button>
-            <button class="ctrl" data-action="end" data-target="ejemplo-2" aria-label="Ir al final">⏭</button>
-          </div>
-          <p class="game__move" id="move-ejemplo-2">Posición inicial</p>
-          <div class="game__legend" id="legend-ejemplo-2"></div>
-          <div class="game__links">
-            <a href="https://www.chess.com/member/tinchograf" target="_blank" rel="noopener">chess.com ↗</a>
-            <a href="https://lichess.org/@/tinchograf" target="_blank" rel="noopener">lichess ↗</a>
-          </div>
-        </div>
-      </article>
-    </div>
+    <div class="concept-tabs" id="concept-tabs"></div>
+    <div class="games" id="games-container"></div>
   </section>
 
   <!-- ============ MEJORES PARTIDAS ============ -->
@@ -415,6 +374,7 @@
 
   <!-- chess.js: motor de validación de jugadas. Archivo local, no depende del CDN. -->
   <script src="chess.min.js" defer></script>
+  <script src="partidas.js" defer></script>
   <script src="script.js" defer></script>
 </body>
 </html>
