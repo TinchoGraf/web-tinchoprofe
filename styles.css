@@ -658,6 +658,21 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin-bottom: 1.5rem;
   font-style: italic;
 }
+.game__title-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.35em;
+  padding: 0.15rem 0.4rem;
+  font-family: var(--sans);
+  font-style: normal;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--accent);
+  color: var(--paper);
+  border-radius: 2px;
+}
 .game__narrative {
   font-family: var(--serif);
   font-style: italic;

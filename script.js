@@ -804,10 +804,13 @@ document.addEventListener("DOMContentLoaded", () => {
     article.dataset.pgn = partida.id;
 
     const colorLabel = partida.color_tincho === "negras" ? "Negras" : "Blancas";
-    const metaParts = [`vs. ${partida.oponente || "Oponente"}`];
-    if (partida.control) metaParts.push(partida.control);
+    const tituloBadge = partida.oponente_titulo
+      ? `<span class="game__title-badge">${escapeHtml(partida.oponente_titulo)}</span>`
+      : "";
+    const metaParts = [`vs. ${tituloBadge}${escapeHtml(partida.oponente || "Oponente")}`];
+    if (partida.control) metaParts.push(escapeHtml(partida.control));
     const fechaTxt = formatFechaEs(partida.fecha);
-    if (fechaTxt) metaParts.push(fechaTxt);
+    if (fechaTxt) metaParts.push(escapeHtml(fechaTxt));
 
     // El box de "momento clave" existe si hay momento_clave clásico y/o annotations por ply.
     const hasKeyBox = !!(partida.momento_clave || (Array.isArray(partida.annotations) && partida.annotations.length));
@@ -821,7 +824,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="game__panel">
         <span class="game__tag">${escapeHtml(partida.concepto)} · ${colorLabel}</span>
         <h3 class="game__title">${escapeHtml(partida.titulo)}</h3>
-        <p class="game__meta">${escapeHtml(metaParts.join(" · "))}</p>
+        <p class="game__meta">${metaParts.join(" · ")}</p>
         <div class="game__comment-slot" id="comment-${partida.id}"></div>
         <div class="game__controls">
           <button class="ctrl" data-action="start" data-target="${partida.id}" aria-label="Ir al inicio">⏮</button>

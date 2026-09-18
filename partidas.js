@@ -182,6 +182,197 @@ window.PARTIDAS_MODELO = [
 1. e4 c6 2. Nf3 d5 3. exd5 cxd5 4. d4 Bf5 5. c4 Nf6 6. Nc3 e6 7. Bd3 Bg6 8. cxd5 Nxd5 9. O-O Nc6 10. a3 Be7 11. Nxd5 Qxd5 12. Bxg6 hxg6 13. Be3 Bd6 14. Qa4 Bxh2+ 15. Nxh2 Qh5 16. Bf4 O-O-O 17. Rac1 f5 18. Rxc6+ Kd7 19. Rc7# 1-0`,
     link_chesscom: "https://www.chess.com/analysis/collection/mates-del-pasillo-2TJahP88n/RZV2FMqd8/analysis?move=33",
     link_lichess: null
+  },
+  {
+    id: "pieza-sobrecargada-oneounze-2025",
+    concepto: "Pieza sobrecargada",
+    titulo: "La importancia de detectar defensores sobrecargados",
+    resultado: "1-0",
+    color_tincho: "blancas",
+    oponente: "oneounze (1868)",
+    fecha: "2025-02-05",
+    control: "Blitz 3+0",
+    narracion:
+      "El negro juega Cf4: hasta ese momento el caballo tapaba el ataque por rayos X del alfil c4 sobre su propio alfil de e6, pero al moverse ese ataque queda al descubierto — y de paso el caballo cae en una casilla atacada por la torre. El problema real: su dama defiende tanto al caballo como al alfil — está sobrecargada. Con un sacrificio de calidad las blancas la desvían y cobran una pieza. Más adelante, en el mediojuego, aparece una segunda táctica de desviación aún más brillante: sacrificio de dama por peón para atraer al rey a un doble ataque de caballo que gana la dama enemiga. Dos combinaciones basadas en el mismo principio — atacar piezas cuyos defensores no pueden defender todo.",
+    momento_clave: {
+      ply: 28,
+      comentario:
+        "El negro acaba de jugar 14... Cf4. Todo parece defendido, pero la dama en f7 tiene dos trabajos: defender el caballo y el alfil. Cuando una pieza defiende dos cosas a la vez, algo se puede caer."
+    },
+    annotations: [
+      {
+        ply: 28,
+        titulo: "La sobrecarga",
+        texto: "14... Cf4. La dama negra defiende dos piezas — el caballo en f4 (atacado por la torre) y el alfil en e6 (atacado por rayos X del alfil c4). No puede defender ambas si una desaparece bajo un jaque o un cambio forzado. Esa es la sobrecarga.",
+        arrows: [
+          { from: "f7", to: "f4", color: "muted" },
+          { from: "f7", to: "e6", color: "muted" }
+        ],
+        highlights: [
+          { square: "f7", color: "accent" },
+          { square: "f4", color: "warning" },
+          { square: "e6", color: "warning" }
+        ]
+      },
+      {
+        ply: 29,
+        titulo: "Desviación con sacrificio de calidad",
+        texto: "15. Txf4! Torre por caballo. Parece un cambio desfavorable, pero fuerza a la dama a recapturar — y al hacerlo, deja de defender al alfil de e6.",
+        arrows: [{ from: "e4", to: "f4", color: "accent" }],
+        highlights: [
+          { square: "f4", color: "accent" },
+          { square: "f7", color: "muted" }
+        ]
+      },
+      {
+        ply: 31,
+        titulo: "Cae el alfil con jaque",
+        texto: "16. Axe6+. Con la dama fuera de f7, el alfil de c4 se cobra el de e6 y de yapa da jaque. Balance del combo: pieza limpia ganada. La calidad sacrificada no importa cuando ganás material neto y actividad.",
+        arrows: [{ from: "c4", to: "e6", color: "accent" }],
+        highlights: [
+          { square: "e6", color: "accent" },
+          { square: "g8", color: "warning" }
+        ]
+      },
+      {
+        ply: 47,
+        titulo: "Segundo combo: sacrificio brillante",
+        texto: "24. Dxg7+! Ahora en el mediojuego aparece la segunda táctica, del mismo espíritu que la primera. El peón g7 sólo lo defiende el rey. Al capturar con jaque, el rey queda obligado a tomar. Pero la idea real es lo que viene después.",
+        arrows: [{ from: "c3", to: "g7", color: "accent" }],
+        highlights: [
+          { square: "g7", color: "accent" },
+          { square: "g8", color: "warning" }
+        ]
+      },
+      {
+        ply: 49,
+        titulo: "El doble ataque del caballo",
+        texto: "25. Ch5+! El caballo da jaque desde h5 y, al mismo tiempo, ataca a la dama en f4. Un doble ataque clásico: el rey tiene que moverse sí o sí, y la dama cae en la siguiente jugada.",
+        arrows: [
+          { from: "g3", to: "h5", color: "accent" },
+          { from: "h5", to: "g7", color: "muted" },
+          { from: "h5", to: "f4", color: "muted" }
+        ],
+        highlights: [
+          { square: "h5", color: "accent" },
+          { square: "g7", color: "warning" },
+          { square: "f4", color: "warning" }
+        ],
+        variantes: [
+          {
+            titulo: "Cualquier escape del rey pierde la dama",
+            texto: "25... Rh8 26. Cxf4 — la dama cae igual. El caballo en h5 controla f4 desde una casilla donde no puede ser capturado. Ningún movimiento del rey defiende f4.",
+            moves: ["Kh8", "Nxf4"]
+          }
+        ]
+      },
+      {
+        ply: 51,
+        titulo: "Cobro y balance",
+        texto: "26. Cxf4. La dama cae. Balance neto del sacrificio: se dio dama por dama + peón — o sea perdimos apenas un peón por el combo. Pero ya teníamos ventaja material del primer combo, y ahora simplificamos hacia una posición ganadora limpia. El rival abandonó pocas jugadas después.",
+        arrows: [{ from: "h5", to: "f4", color: "accent" }],
+        highlights: [{ square: "f4", color: "accent" }]
+      }
+    ],
+    pgn: `[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2025.02.05"]
+[White "TinchoGraf"]
+[Black "oneounze"]
+[Result "1-0"]
+[WhiteElo "1863"]
+[BlackElo "1868"]
+[ECO "C42"]
+[TimeControl "180"]
+[Termination "TinchoGraf won by resignation"]
+
+1. e4 e5 2. Nf3 Nf6 3. d3 Nc6 4. Be2 Be7 5. Bg5 O-O 6. Nbd2 d5 7. exd5 Nxd5 8. Bxe7 Qxe7 9. O-O f5 10. Re1 e4 11. dxe4 fxe4 12. Bc4 Be6 13. Rxe4 Qf7 14. Nf1 Nf4 15. Rxf4 Qxf4 16. Bxe6+ Kh8 17. Bb3 Rad8 18. Qe1 Rfe8 19. Qc3 Nd4 20. Nxd4 Rxd4 21. Ng3 Rd2 22. Rf1 Red8 23. h3 b6 24. Qxg7+ Kxg7 25. Nh5+ Kf8 26. Nxf4 a5 27. Ne6+ Ke7 28. Nxd8 Rxd8 29. Re1+ Kd6 30. Rd1+ Ke7 31. Rxd8 1-0`,
+    link_chesscom: "https://www.chess.com/analysis/collection/pieza-sobrecargada-apB9tzjG/34gmZe4RgJ/analysis?move=27",
+    link_lichess: null
+  },
+  {
+    id: "casillas-debiles-shugde-2026",
+    concepto: "Casillas débiles del rival",
+    titulo: "La importancia de instalarse en casillas débiles y atacar ganando tempo",
+    resultado: "1-0",
+    color_tincho: "blancas",
+    oponente: "Shugde (1954)",
+    fecha: "2026-09-18",
+    control: "Blitz 3+0",
+    narracion:
+      "Las blancas identifican que d5 es una casilla débil del negro — no hay peones que puedan disputarla. Instalan un caballo ahí y desde esa base lanzan un combo de saltos que gana la calidad. Después, en la fase posterior, todas las jugadas blancas atacan piezas del rival ganando tempos: la dama negra pasa la partida escapando, sin poder coordinar defensa. El principio: cuando tenés una casilla fuerte y ganás tempo con cada jugada, la posición se juega sola.",
+    momento_clave: {
+      ply: 35,
+      comentario:
+        "18. Cc7 — el caballo salta desde d5 atacando la torre en a8. Ataca con tempo (el negro tiene que responder a la amenaza) y está defendido por el otro caballo. A partir de acá se despliega la ganancia de calidad."
+    },
+    annotations: [
+      {
+        ply: 29,
+        titulo: "La casilla débil: d5",
+        texto: "15. Cd5. El caballo se instala en la casilla débil del negro. Ningún peón negro puede echarlo — c6 y e6 ya avanzaron o no están. Desde acá el caballo apunta a c7, e7, f6, b6 — todas casillas cercanas al rey y a piezas negras.",
+        arrows: [{ from: "c3", to: "d5", color: "accent" }],
+        highlights: [{ square: "d5", color: "accent" }]
+      },
+      {
+        ply: 35,
+        titulo: "Salto con tempo",
+        texto: "18. Cc7 — el caballo ataca la torre de a8 y está defendido por el otro caballo. El negro no puede simplemente capturarlo (queda entregado un caballo por nada) y tiene que responder a la amenaza sobre la torre. Tempo ganado.",
+        arrows: [
+          { from: "d5", to: "c7", color: "accent" },
+          { from: "c7", to: "a8", color: "warning" }
+        ],
+        highlights: [
+          { square: "c7", color: "accent" },
+          { square: "a8", color: "warning" }
+        ]
+      },
+      {
+        ply: 39,
+        titulo: "Cae el alfil",
+        texto: "20. Cxe6 — el caballo captura el alfil en e6. Los cambios forzados que hizo el negro para deshacerse de los caballos le dejaron el alfil expuesto. Ahora la torre de f8 está en la mira.",
+        arrows: [{ from: "c7", to: "e6", color: "muted" }],
+        highlights: [
+          { square: "e6", color: "accent" },
+          { square: "f8", color: "warning" }
+        ]
+      },
+      {
+        ply: 41,
+        titulo: "Cae la calidad",
+        texto: "21. Cxf8. Torre por caballo — ganamos la calidad. Balance del combo: dos piezas menores por torre + alfil. Ventaja clara y activa.",
+        arrows: [{ from: "e6", to: "f8", color: "accent" }],
+        highlights: [{ square: "f8", color: "accent" }]
+      },
+      {
+        ply: 51,
+        titulo: "Tempo tras tempo",
+        texto: "26. Tc6 — arranca la segunda fase. Cada jugada blanca ataca la dama negra o una amenaza que hay que atender. La dama negra pasa el resto de la partida corriendo, sin poder coordinar defensa. Cuando ganás muchos tempos seguidos, el rival termina cayendo por presión acumulada — que fue exactamente lo que pasó acá.",
+        arrows: [
+          { from: "c1", to: "c6", color: "accent" },
+          { from: "c6", to: "b6", color: "warning" }
+        ],
+        highlights: [
+          { square: "c6", color: "accent" },
+          { square: "b6", color: "warning" }
+        ]
+      }
+    ],
+    pgn: `[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2026.09.18"]
+[White "TinchoGraf"]
+[Black "Shugde"]
+[Result "1-0"]
+[WhiteElo "1973"]
+[BlackElo "1954"]
+[ECO "B31"]
+[TimeControl "180"]
+[Termination "TinchoGraf won on time"]
+
+1. e4 c5 2. Nf3 Nc6 3. Bb5 g6 4. O-O Bg7 5. Re1 d6 6. c3 e5 7. d4 cxd4 8. cxd4 exd4 9. Nxd4 Ne7 10. Bg5 f6 11. Bh4 O-O 12. Nc3 Ne5 13. Ba4 a6 14. Bb3+ Kh8 15. Nd5 g5 16. Bg3 b5 17. Rc1 Bb7 18. Nc7 Bc8 19. Nce6 Bxe6 20. Nxe6 Qb6 21. Nxf8 Rxf8 22. Bxe5 fxe5 23. Qe2 Ng6 24. g3 g4 25. Bd5 h5 26. Rc6 Qd4 27. Rd1 Qb4 28. a3 Qa5 29. Rdc1 Bh6 30. R1c2 Ne7 31. Rxd6 Bg5 32. Be6 b4 33. Rxa6 Qd8 34. Ra7 b3 35. Rcc7 Qd6 36. h4 Bf6 37. Qe3 Kg7 38. Rd7 1-0`,
+    link_chesscom: "https://www.chess.com/analysis/collection/posicionales-tempo-3ATNub8bp/54wa6rsCN2/analysis?move=33",
+    link_lichess: null
   }
 
   // ------------------------------------------------------------------
@@ -195,6 +386,9 @@ window.PARTIDAS_MODELO = [
   //   resultado: "1-0",                            // "1-0" | "0-1" | "½-½"
   //   color_tincho: "blancas",                     // "blancas" | "negras" — tu color siempre se ve abajo
   //   oponente: "NombreOponente (elo)",
+  //   oponente_titulo: "CM",                       // opcional — título ajedrecístico del oponente:
+  //                                                 // CM, FM, IM, GM, NM, WGM, WIM, WFM, WCM.
+  //                                                 // Si se omite (o va vacío/null), no se muestra badge.
   //   fecha: "2026-09-04",                         // ISO, opcional
   //   control: "Blitz 3+0",                        // opcional
   //   narracion: "Texto de 2 a 4 oraciones explicando qué concepto ilustra la partida y por qué vale la pena mirarla.",
