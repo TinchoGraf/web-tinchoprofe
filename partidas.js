@@ -92,6 +92,96 @@ window.PARTIDAS_MODELO = [
 1. d4 d5 2. Nc3 Nf6 3. Nf3 Bg4 4. Bf4 e6 5. e3 Bd6 6. Bg3 O-O 7. Bd3 Nbd7 8. O-O Qe7 9. Be2 Bxf3 10. Bxf3 Rfe8 11. Re1 Rad8 12. Qe2 e5 13. dxe5 Nxe5 14. Nxd5 Nxf3+ 15. Qxf3 Nxd5 16. Qxd5 Bxg3 17. Qf3 Bd6 18. Qxb7 Qh4 19. g3 Qg4 20. b4 Rb8 21. Qxa7 Rxb4 22. Qa5 h5 23. h4 Bxg3 24. Qg5 Bxh4+ 25. Qxg4 Rxg4+ 26. Kf1 Rc4 27. Re2 Rb8 28. f4 Rb2 29. Rd1 Rbxc2 30. Rd8+ Kh7 31. Rd7 Bf6 32. Rxf7 h4 33. Rxc2 Rxc2 34. a4 h3 35. Kg1 Kg6 36. Rd7 Kf5 37. Rd5+ Ke4 38. Rh5 h2+ 39. Kh1 Kxe3 40. f5 Kf3 41. Rxh2 Rxh2+ 42. Kxh2 Bd4 43. a5 Kf4 44. a6 Kxf5 45. Kg3 g5 46. a7 Bxa7 47. Kf3 Bd4 48. Kg3 g4 49. Kg2 Kf4 50. Kf1 c5 51. Ke2 c4 52. Kf1 Kg3 53. Ke2 Kh2 54. Kd2 g3 55. Kc2 g2 56. Kd2 g1=Q 57. Ke2 Qe3+ 58. Kd1 Qf2 59. Kc1 c3 60. Kd1 Qd2# 0-1`,
     link_chesscom: "https://www.chess.com/analysis/collection/jugada-intermedia-descubierto-ganador-wrK1EX4a/2rx5UhLr4e/analysis?move=26",
     link_lichess: null
+  },
+  {
+    id: "mates-forzados-kimple1-2025",
+    concepto: "Atacar al rey sin defensores",
+    titulo: "La importancia de conocer las distintas figuras de mate",
+    resultado: "1-0",
+    color_tincho: "blancas",
+    oponente: "Kimple1 (1770)",
+    fecha: "2025-02-23",
+    control: "Blitz 3+0",
+    narracion:
+      "Un error posicional del negro deja al rey sin defensores — todas sus piezas fueron al ataque. A partir de ahí las blancas encuentran una secuencia forzada de jaques y capturas que termina en mate. La lección: cuando calculás jugadas forzadas un poco más adelante, muchas veces aparece una figura de mate escondida que no se ve a primera vista.",
+    momento_clave: {
+      ply: 34,
+      comentario:
+        "El negro acaba de jugar 17... f5, debilitando su posición sin defender al rey. Todas las piezas negras están del lado opuesto del tablero — ninguna vuelve a tiempo."
+    },
+    annotations: [
+      {
+        ply: 34,
+        titulo: "El error: rey sin defensores",
+        texto: "17... f5? El negro sigue atacando pero se olvida de defender. La dama negra está en h5, la torre en d8, el caballo en c6, el rey en c8. Ninguna pieza puede volver a defender la casilla c7 ni el flanco de dama a tiempo. Ahora las blancas calculan jugadas forzadas y aparece el mate.",
+        arrows: [
+          { from: "h5", to: "c8", color: "muted" },
+          { from: "d8", to: "c8", color: "muted" }
+        ],
+        highlights: [
+          { square: "c8", color: "warning" },
+          { square: "c7", color: "accent" }
+        ]
+      },
+      {
+        ply: 35,
+        titulo: "Sacrificio con jaque forzado",
+        texto: "18. Txc6+! Sacrificio de torre por caballo, con jaque. Las respuestas son forzadas: si 18... bxc6 sigue 19. Dxc6# — la dama entra por la diagonal y da mate con la torre negra clavada. Si el rey se mueve, entra otra idea que ya veremos.",
+        arrows: [{ from: "c1", to: "c6", color: "accent" }],
+        highlights: [
+          { square: "c6", color: "accent" },
+          { square: "c8", color: "warning" }
+        ],
+        variantes: [
+          {
+            titulo: "Si el negro captura la torre",
+            texto: "18... bxc6 19. Dxc6# — la dama entra por la diagonal a4-c6 y da mate: cubre b7, c7 y d7; el alfil de f4 cubre b8 por la diagonal larga; y d8 lo ocupa la propia torre negra. El rey en c8 no tiene a dónde ir.",
+            moves: ["bxc6", "Qxc6#"]
+          }
+        ]
+      },
+      {
+        ply: 36,
+        titulo: "El rey escapa (pero no se salva)",
+        texto: "18... Kd7. El rey evita la captura, pero la torre en c6 sigue clavando y ahora hay una segunda figura de mate: un descubierto usando el alfil de f4 como pieza protectora, y la dama controlando la diagonal blanca.",
+        arrows: [
+          { from: "f4", to: "c7", color: "muted" },
+          { from: "a4", to: "d7", color: "muted" }
+        ],
+        highlights: [
+          { square: "d7", color: "warning" },
+          { square: "c7", color: "accent" }
+        ]
+      },
+      {
+        ply: 37,
+        titulo: "Mate al descubierto",
+        texto: "19. Tc7#. Jaque mate. La torre se mueve a c7 dando jaque, protegida por el alfil de f4. El rey no puede capturar (alfil defiende), no puede escapar a d6 ni e8 (dama y alfil cubren), no puede bloquear. Mate.",
+        arrows: [
+          { from: "c6", to: "c7", color: "accent" },
+          { from: "f4", to: "c7", color: "muted" }
+        ],
+        highlights: [
+          { square: "c7", color: "accent" },
+          { square: "d7", color: "warning" }
+        ]
+      }
+    ],
+    pgn: `[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2025.02.23"]
+[White "TinchoGraf"]
+[Black "Kimple1"]
+[Result "1-0"]
+[WhiteElo "1809"]
+[BlackElo "1770"]
+[ECO "B13"]
+[TimeControl "180"]
+[Termination "TinchoGraf won by checkmate"]
+
+1. e4 c6 2. Nf3 d5 3. exd5 cxd5 4. d4 Bf5 5. c4 Nf6 6. Nc3 e6 7. Bd3 Bg6 8. cxd5 Nxd5 9. O-O Nc6 10. a3 Be7 11. Nxd5 Qxd5 12. Bxg6 hxg6 13. Be3 Bd6 14. Qa4 Bxh2+ 15. Nxh2 Qh5 16. Bf4 O-O-O 17. Rac1 f5 18. Rxc6+ Kd7 19. Rc7# 1-0`,
+    link_chesscom: "https://www.chess.com/analysis/collection/mates-del-pasillo-2TJahP88n/RZV2FMqd8/analysis?move=33",
+    link_lichess: null
   }
 
   // ------------------------------------------------------------------
@@ -129,12 +219,26 @@ window.PARTIDAS_MODELO = [
   //       titulo: "La táctica doble",               // opcional — encabezado corto del box
   //       texto: "El blanco captura el peón, pero el negro tiene una secuencia forzada de dos tácticas encadenadas.",
   //       arrows: [                                 // opcional — líneas con punta de flecha
-  //         { from: "e5", to: "f3", color: "accent" },  // colores válidos: "accent" (bordó, default), "muted" (gris), "warning" (ocre)
+  //         { from: "e5", to: "f3", color: "accent" },  // colores válidos: "accent" (bordó, default), "muted" (azul pizarra), "warning" (ocre)
   //         { from: "d8", to: "d5", color: "muted" }
   //       ],
   //       highlights: [                             // opcional — casillas resaltadas
   //         { square: "d5", color: "accent" },
   //         { square: "f3", color: "warning" }
+  //       ],
+  //       // variantes (opcional): líneas alternativas que NO se jugaron, para mostrar una
+  //       // respuesta forzada distinta (típico en mates con varias defensas posibles).
+  //       // Aparece un botón "Ver variante" por cada una debajo del texto de la annotation;
+  //       // al clickearlo el tablero pasa a mostrar la línea y un botón para volver.
+  //       // "moves" son jugadas en SAN aplicadas en orden desde la posición de este ply —
+  //       // si alguna es ilegal o está mal escrita, esa variante no se muestra (se loguea
+  //       // un warning en consola con el id de la partida y el índice de la variante).
+  //       variantes: [
+  //         {
+  //           titulo: "Si captura con el peón",
+  //           texto: "En vez de la jugada real, si el negro captura con el peón sigue una dama entrando con jaque mate.",
+  //           moves: ["bxc6", "Qxc6#"]
+  //         }
   //       ]
   //     },
   //     {

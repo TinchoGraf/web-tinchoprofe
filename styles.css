@@ -14,10 +14,10 @@
 
   /* Flechas y highlights de anotaciones sobre el tablero */
   --arrow-accent: #8b1a1a;
-  --arrow-muted: #6b6b6b;
+  --arrow-muted: #3a5a7a;    /* azul pizarra — se distingue del gris de las casillas oscuras */
   --arrow-warning: #b8860b;  /* ocre editorial */
   --hl-accent: rgba(139, 26, 26, 0.35);
-  --hl-muted: rgba(107, 107, 107, 0.3);
+  --hl-muted: rgba(58, 90, 122, 0.35);
   --hl-warning: rgba(184, 134, 11, 0.35);
 
   --serif: "Cormorant Garamond", "Times New Roman", serif;
@@ -742,6 +742,55 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   line-height: 1.5;
   color: var(--ink);
 }
+
+/* Variantes: líneas alternativas que no se jugaron, disparadas desde una annotation */
+.game__variants {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.game__variants-label {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.15rem;
+}
+.game__variant-btn {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  font-family: inherit;
+  font-style: normal;
+  letter-spacing: 0.02em;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line-soft);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.game__variant-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.game__variant-back {
+  display: block;
+  font-family: var(--sans);
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 0.75rem;
+}
+.game__variant-back:hover { text-decoration: underline; }
 .game__links {
   display: flex; gap: 1.5rem;
   font-size: 0.875rem;

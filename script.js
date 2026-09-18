@@ -596,6 +596,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function refreshGameBoard(id) {
     const state = boards[id];
     if (!state) return;
+
+    if (state.variantMode) {
+      refreshVariantView(id, state);
+      return;
+    }
+
     const pos = state.positions[state.ply];
     state.renderer.setPosition(pos.fen);
     state.renderer.highlightLastMove(pos.from, pos.to);
@@ -635,7 +641,7 @@ document.addEventListener("DOMContentLoaded", () => {
         arrows: annotation.arrows || [],
         highlights: annotation.highlights || []
       });
-      renderCommentSlot(slot, "keymoment", annotation.titulo, annotation.texto);
+      renderCommentSlot(slot, "keymoment", annotation.titulo, annotation.texto, buildVariantButtonsHtml(id, state, annotation));
       return;
     }
 
@@ -643,23 +649,133 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const momentoClave = state.momentoClave;
     if (momentoClave && annotations.length === 0 && state.ply === momentoClave.ply) {
-      renderCommentSlot(slot, "keymoment", null, momentoClave.comentario);
+      renderCommentSlot(slot, "keymoment", null, momentoClave.comentario, "");
       return;
     }
 
-    renderCommentSlot(slot, "narrative", null, state.narracion);
+    renderCommentSlot(slot, "narrative", null, state.narracion, "");
   }
 
-  function renderCommentSlot(slot, kind, titulo, texto) {
+  function renderCommentSlot(slot, kind, titulo, texto, extraHtml) {
     if (kind === "keymoment") {
       slot.innerHTML = `
         <div class="game__key-moment game__key-moment--visible">
           <p class="game__key-moment-title">${escapeHtml(titulo || "")}</p>
           <p>${escapeHtml(texto || "")}</p>
+          ${extraHtml || ""}
         </div>`;
       return;
     }
     slot.innerHTML = texto ? `<p class="game__narrative">${escapeHtml(texto)}</p>` : "";
+  }
+
+  // Arma los botones "Ver variante" para una annotation, filtrando las que no validaron
+  // (ver buildVariantCache). Si no queda ninguna variante válida, no se agrega nada.
+  function buildVariantButtonsHtml(id, state, annotation) {
+    if (!Array.isArray(annotation.variantes) || annotation.variantes.length === 0) return "";
+    const buttons = annotation.variantes
+      .map((variante, idx) => {
+        const cached = state.variantCache[`${annotation.ply}:${idx}`];
+        if (!cached || !cached.ok) return "";
+        return `<button type="button" class="game__variant-btn" data-target="${id}" data-ply="${annotation.ply}" data-variant-index="${idx}">${escapeHtml(variante.titulo)} →</button>`;
+      })
+      .filter(Boolean)
+      .join("");
+    if (!buttons) return "";
+    return `<div class="game__variants"><span class="game__variants-label">Variantes</span>${buttons}</div>`;
+  }
+
+  // Valida y precalcula, para cada annotation con variantes, la secuencia de posiciones
+  // resultante de aplicar sus SAN sobre la posición del ply de esa annotation. Variantes con
+  // jugadas inválidas quedan marcadas como no válidas (ok:false) y no se muestran como botón.
+  function buildVariantCache(partida, positions) {
+    const cache = {};
+    (partida.annotations || []).forEach((annotation) => {
+      if (!Array.isArray(annotation.variantes)) return;
+      annotation.variantes.forEach((variante, vIdx) => {
+        const key = `${annotation.ply}:${vIdx}`;
+        const basePos = positions[annotation.ply];
+        if (!basePos) {
+          console.warn(`[partidas] ${partida.id}: variante ${vIdx} del ply ${annotation.ply} — ese ply no existe en la partida.`);
+          cache[key] = { ok: false };
+          return;
+        }
+        const game = new Chess(basePos.fen);
+        const variantPositions = [{ fen: basePos.fen, from: null, to: null }];
+        const sanMoves = [];
+        let ok = true;
+        (variante.moves || []).forEach((moveSan) => {
+          if (!ok) return;
+          const mv = game.move(moveSan, { sloppy: true });
+          if (!mv) {
+            ok = false;
+            console.warn(`[partidas] ${partida.id}: variante ${vIdx} del ply ${annotation.ply} — jugada inválida "${moveSan}".`);
+            return;
+          }
+          variantPositions.push({ fen: game.fen(), from: mv.from, to: mv.to });
+          sanMoves.push(mv.san);
+        });
+        cache[key] = ok
+          ? { ok: true, basePly: annotation.ply, positions: variantPositions, sanMoves }
+          : { ok: false };
+      });
+    });
+    return cache;
+  }
+
+  function enterVariant(id, state, annotation, variantIndex) {
+    const cached = state.variantCache[`${annotation.ply}:${variantIndex}`];
+    if (!cached || !cached.ok) return;
+    const variante = annotation.variantes[variantIndex];
+    state.variantMode = true;
+    state.returnPly = state.ply;
+    state.variant = {
+      basePly: cached.basePly,
+      positions: cached.positions,
+      sanMoves: cached.sanMoves,
+      ply: Math.min(1, cached.positions.length - 1),
+      titulo: variante.titulo,
+      texto: variante.texto
+    };
+    refreshGameBoard(id);
+  }
+
+  function exitVariant(id, state) {
+    state.variantMode = false;
+    state.variant = null;
+    state.ply = state.returnPly;
+    state.returnPly = null;
+    refreshGameBoard(id);
+  }
+
+  function refreshVariantView(id, state) {
+    const variant = state.variant;
+    const pos = variant.positions[variant.ply];
+    state.renderer.setPosition(pos.fen);
+    state.renderer.highlightLastMove(pos.from, pos.to);
+    state.renderer.clearAnnotation();
+
+    const label = document.getElementById(`move-${id}`);
+    if (label) {
+      if (variant.ply === 0) {
+        label.textContent = "Posición inicial de la variante";
+      } else {
+        const globalPly = variant.basePly + variant.ply;
+        const moveNum = Math.ceil(globalPly / 2);
+        const san = variant.sanMoves[variant.ply - 1];
+        const isWhite = globalPly % 2 === 1;
+        label.textContent = `${moveNum}${isWhite ? "." : "..."} ${san} (variante)`;
+      }
+    }
+
+    const slot = document.getElementById(`comment-${id}`);
+    if (!slot) return;
+    slot.innerHTML = `
+      <div class="game__key-moment game__key-moment--visible">
+        <button type="button" class="game__variant-back" data-target="${id}">← Volver a la partida</button>
+        <p class="game__key-moment-title">${escapeHtml(variant.titulo || "")}</p>
+        <p>${escapeHtml(variant.texto || "")}</p>
+      </div>`;
   }
 
   ["mejor-1", "mejor-2"].forEach(setupGameBoard);
@@ -755,7 +871,11 @@ document.addEventListener("DOMContentLoaded", () => {
       momentoClave,
       annotations,
       keyMomentPly,
-      narracion: partida.narracion || ""
+      narracion: partida.narracion || "",
+      variantCache: buildVariantCache(partida, positions),
+      variantMode: false,
+      variant: null,
+      returnPly: null
     };
     refreshGameBoard(partida.id);
   }
@@ -819,6 +939,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const action = ctrlBtn.dataset.action;
       const state = boards[id];
       if (!state) return;
+
+      if (state.variantMode) {
+        const v = state.variant;
+        // ⏮ va al primer move de la variante (no a la posición base, ply 0).
+        if (action === "start") v.ply = Math.min(1, v.positions.length - 1);
+        else if (action === "end") v.ply = v.positions.length - 1;
+        else if (action === "prev" && v.ply > 1) v.ply--;
+        else if (action === "next" && v.ply < v.positions.length - 1) v.ply++;
+        refreshGameBoard(id);
+        return;
+      }
+
       if (action === "start") state.ply = 0;
       else if (action === "end") state.ply = state.positions.length - 1;
       else if (action === "prev" && state.ply > 0) state.ply--;
@@ -832,8 +964,34 @@ document.addEventListener("DOMContentLoaded", () => {
       const id = keyBtn.dataset.target;
       const state = boards[id];
       if (!state || state.keyMomentPly === undefined) return;
+      // Si estaba viendo una variante, salir de ese modo antes de saltar al momento clave.
+      state.variantMode = false;
+      state.variant = null;
+      state.returnPly = null;
       state.ply = state.keyMomentPly;
       refreshGameBoard(id);
+      return;
+    }
+
+    const variantBtn = e.target.closest(".game__variant-btn[data-target]");
+    if (variantBtn) {
+      const id = variantBtn.dataset.target;
+      const state = boards[id];
+      if (!state) return;
+      const annotationPly = parseInt(variantBtn.dataset.ply, 10);
+      const variantIndex = parseInt(variantBtn.dataset.variantIndex, 10);
+      const annotation = (state.annotations || []).find((a) => a.ply === annotationPly);
+      if (!annotation) return;
+      enterVariant(id, state, annotation, variantIndex);
+      return;
+    }
+
+    const backBtn = e.target.closest(".game__variant-back[data-target]");
+    if (backBtn) {
+      const id = backBtn.dataset.target;
+      const state = boards[id];
+      if (!state) return;
+      exitVariant(id, state);
     }
   });
 
