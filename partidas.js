@@ -566,6 +566,93 @@ window.PARTIDAS_MODELO = [
 1. f4 d5 2. d4 Nf6 3. Nf3 c5 4. e3 Nc6 5. c3 Ne4 6. Bd3 e6 7. O-O Be7 8. Qc2 f5 9. a3 c4 10. Be2 O-O 11. b4 Bf6 12. a4 a6 13. a5 Na7 14. Na3 Bd7 15. Bd2 Bb5 16. Be1 Qd7 17. Bd1 Kh8 18. Ra2 Rg8 19. g3 g5 20. Ne5 Bxe5 21. dxe5 gxf4 22. exf4 Rg6 23. Kh1 Rh6 24. Kg2 Rg8 25. Kf3 Bc6 26. Ke3 Rh3 27. Rg1 Rd8 28. Kd4 Bb5 29. Rg2 Nc6+ 30. Ke3 d4+ 31. Kf3 d3 32. Qc1 Qd5 33. Ke3 Nxa5 34. Nxb5 34... Qxb5 35. Rxa5 Qb6+ 36. Kf3 d2 37. Rxd2 Rxd2 38. Bxd2 Qf2# 0-1`,
     link_chesscom: "https://www.chess.com/analysis/collection/ventaja-de-espacio-en-pos-cerradas-2PPBVBenS/39CYiSBNRk/analysis?move=59",
     link_lichess: null
+  },
+  {
+    id: "romper-estructura-bishop239802-2024",
+    concepto: "Ruptura en posiciones cerradas",
+    titulo: "La importancia de coordinar piezas contra la estructura rota",
+    resultado: "0-1",
+    color_tincho: "negras",
+    oponente: "bishop239802 (1872)",
+    fecha: "2024-10-30",
+    control: "Blitz 3+0",
+    narracion:
+      "Romper la estructura de peones del rival es sólo el primer paso — el segundo, casi más importante, es coordinar rápido las piezas contra la debilidad recién creada. En esta partida el negro captura con caballo por c3 forzando a las blancas a doblar peones en la columna c, y en las siguientes ocho jugadas apila torre y dama contra ese peón débil. La presión termina cobrándose calidad más peón por una combinación de clavadas y cambios forzados. Sin la coordinación posterior, el peón doblado sería una molestia; con ella, es la partida.",
+    momento_clave: {
+      ply: 24,
+      comentario:
+        "12... Cxc3+ — el negro captura con jaque, forzando al blanco a recapturar. Ambas recapturas son posibles pero Dxc3 deja la dama mal parada; bxc3 parece natural y dobla los peones."
+    },
+    annotations: [
+      {
+        ply: 24,
+        titulo: "La decisión de romper",
+        texto: "12... Cxc3+. El caballo captura con jaque y fuerza recaptura. El blanco puede tomar con dama o con peón — Dxc3 mete a la dama en una casilla pobre, así que casi automáticamente el blanco elige bxc3. Pero eso dobla los peones en la columna c y crea la debilidad permanente que vamos a atacar.",
+        arrows: [{ from: "d5", to: "c3", color: "accent" }],
+        highlights: [
+          { square: "c3", color: "accent" },
+          { square: "b2", color: "muted" }
+        ]
+      },
+      {
+        ply: 25,
+        titulo: "La estructura rota: peones doblados en c",
+        texto: "13. bxc3. Ahí quedan los peones doblados en c2-c3. Además, la columna b queda semiabierta y el peón de a2 aislado — todo el flanco de dama del blanco está estructuralmente peor. La debilidad principal es c3: un peón que no puede ser defendido por otro peón y que sólo lo tapa el otro peón c2.",
+        highlights: [
+          { square: "c2", color: "warning" },
+          { square: "c3", color: "warning" },
+          { square: "b2", color: "muted" }
+        ]
+      },
+      {
+        ply: 28,
+        titulo: "Coordinar contra la debilidad",
+        texto: "14... Tfc8. La torre entra a la columna c. En las jugadas siguientes se suman dama y la otra torre — coordinar es apilar piezas contra el peón débil hasta que la posición no aguante. Sin este paso, la ruptura estructural no vale nada.",
+        arrows: [
+          { from: "f8", to: "c8", color: "accent" },
+          { from: "c8", to: "c3", color: "muted" }
+        ],
+        highlights: [
+          { square: "c8", color: "accent" },
+          { square: "c3", color: "warning" }
+        ]
+      },
+      {
+        ply: 41,
+        titulo: "La combinación tras la presión",
+        texto: "21. Db2. Después de tantas jugadas de presión, la posición explota tácticamente. El blanco ofrece cambio de damas pero eso permite Cc3+ ganando calidad — el caballo entra en la casilla débil c3 con jaque, y todo lo que sigue es forzado hacia la ganancia material.",
+        arrows: [{ from: "d5", to: "c3", color: "muted" }],
+        highlights: [
+          { square: "c3", color: "warning" },
+          { square: "b2", color: "accent" }
+        ]
+      },
+      {
+        ply: 46,
+        titulo: "Cobro: calidad más peón",
+        texto: "23... Cxd1+. Después del cambio forzado de damas y la recaptura del rey en b2, el caballo entra en d1 con jaque comiendo la torre. Balance de toda la combinación: ganamos calidad más peón. Toda la ventaja nace de haber roto la estructura ocho jugadas antes y de haber coordinado las piezas contra la debilidad sin darle respiro al rival.",
+        arrows: [{ from: "c3", to: "d1", color: "accent" }],
+        highlights: [
+          { square: "d1", color: "accent" },
+          { square: "b2", color: "warning" }
+        ]
+      }
+    ],
+    pgn: `[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2024.10.30"]
+[White "bishop239802"]
+[Black "TinchoGraf"]
+[Result "0-1"]
+[WhiteElo "1872"]
+[BlackElo "1835"]
+[ECO "B32"]
+[TimeControl "180"]
+[Termination "TinchoGraf won by checkmate"]
+
+1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 e5 5. Nb3 Nf6 6. Nc3 Be7 7. f3 O-O 8. Be3 d5 9. exd5 Nb4 10. Qd2 Nbxd5 11. O-O-O Be6 12. Kb1 Nxc3+ 13. bxc3 Qc7 14. Bd3 Rfc8 15. c4 a5 16. c5 a4 17. Na1 Nd5 18. Bf2 Bxc5 19. Bxc5 Qxc5 20. c4 Qb6+ 21. Qb2 Nc3+ 22. Kc2 Qxb2+ 23. Kxb2 Nxd1+ 24. Rxd1 Bxc4 25. Bxc4 Rxc4 26. Nc2 Rac8 27. Ne3 R4c5 28. Nd5 Kf8 29. Ne3 b5 30. Rd2 f6 31. Nf5 b4 32. g3 Rc3 33. f4 a3+ 34. Ka1 Rc1# 0-1`,
+    link_chesscom: "https://www.chess.com/analysis/collection/romper-la-estructura-de-peones-y-atacarla-EiDgAxSJ/WiLvt9r9C/analysis?move=23",
+    link_lichess: null
   }
 
   // ------------------------------------------------------------------
