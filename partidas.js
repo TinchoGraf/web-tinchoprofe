@@ -653,6 +653,97 @@ window.PARTIDAS_MODELO = [
 1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 e5 5. Nb3 Nf6 6. Nc3 Be7 7. f3 O-O 8. Be3 d5 9. exd5 Nb4 10. Qd2 Nbxd5 11. O-O-O Be6 12. Kb1 Nxc3+ 13. bxc3 Qc7 14. Bd3 Rfc8 15. c4 a5 16. c5 a4 17. Na1 Nd5 18. Bf2 Bxc5 19. Bxc5 Qxc5 20. c4 Qb6+ 21. Qb2 Nc3+ 22. Kc2 Qxb2+ 23. Kxb2 Nxd1+ 24. Rxd1 Bxc4 25. Bxc4 Rxc4 26. Nc2 Rac8 27. Ne3 R4c5 28. Nd5 Kf8 29. Ne3 b5 30. Rd2 f6 31. Nf5 b4 32. g3 Rc3 33. f4 a3+ 34. Ka1 Rc1# 0-1`,
     link_chesscom: "https://www.chess.com/analysis/collection/romper-la-estructura-de-peones-y-atacarla-EiDgAxSJ/WiLvt9r9C/analysis?move=23",
     link_lichess: null
+  },
+  {
+    id: "sacrificio-dama-nekrs-2024",
+    concepto: "Reconocer patrones tácticos",
+    titulo: "Cómo practicar tantos puzzles de tácticas da sus frutos",
+    resultado: "0-1",
+    color_tincho: "negras",
+    oponente: "nekrs (1705)",
+    fecha: "2024-06-20",
+    control: "Blitz 3+0",
+    narracion:
+      "El sacrificio de dama que aparece en la jugada 30 no se ve si no estás entrenado en reconocer patrones — pero si hiciste puzzles suficientes, la idea salta a la vista. La dama se cambia por torre + alfil ganando tiempos preciosos contra el rey blanco encerrado. Después vienen dos ideas más: infiltración total en la primera fila, y un segundo sacrificio (torre por rey) que desvía al monarca hacia un doblete de caballo que gana la dama. Toda la partida es la traducción práctica de horas y horas de entrenamiento táctico — patrones que se ven porque ya los viste cien veces antes.",
+    momento_clave: {
+      ply: 60,
+      comentario:
+        "30... Dxc1+! Sacrificio de dama que gana tiempo contra el rey. No es sólo el material que se compensa después — es lo que viene: torres dobladas, rey mal defendido, tiempos ganados en cascada."
+    },
+    annotations: [
+      {
+        ply: 60,
+        titulo: "Sacrificio de dama con jaque",
+        texto: "30... Dxc1+! La dama se ofrece por torre + alfil. Parece perder material pero es sólo el arranque de una combinación de tres tiempos: primero el jaque forzado, después la infiltración por la columna c, y finalmente un segundo sacrificio que ya voy a mostrar. La clave es ver el patrón completo antes de mover.",
+        arrows: [{ from: "c7", to: "c1", color: "accent" }],
+        highlights: [
+          { square: "c1", color: "accent" },
+          { square: "a1", color: "warning" }
+        ]
+      },
+      {
+        ply: 62,
+        titulo: "Cobro y doble amenaza",
+        texto: "31... Txc2. La torre entra en c2 amenazando al alfil de c1 con jaque, y de paso al peón — y también apuntando a la dama en la próxima. En dos jugadas más el negro va a tener las dos torres coordinadas contra el rey blanco encerrado.",
+        arrows: [
+          { from: "c4", to: "c2", color: "accent" },
+          { from: "c2", to: "c1", color: "muted" }
+        ],
+        highlights: [
+          { square: "c2", color: "accent" },
+          { square: "c1", color: "warning" }
+        ]
+      },
+      {
+        ply: 66,
+        titulo: "Infiltración en la primera fila",
+        texto: "33... Te1. La segunda torre baja a la primera fila. El rey blanco en b2 está encerrado — sus propias piezas (dama en d3, caballo dormido) le tapan las salidas. Preparamos el segundo golpe.",
+        arrows: [{ from: "e8", to: "e1", color: "accent" }],
+        highlights: [
+          { square: "e1", color: "accent" },
+          { square: "b2", color: "warning" }
+        ]
+      },
+      {
+        ply: 68,
+        titulo: "Segundo sacrificio: desviación de rey",
+        texto: "34... Tb1+! Torre por rey. El rey está obligado a tomar (Kxb1 es la única jugada legal — no puede escapar a lados donde el caballo controla). Pero al tomar, el rey se aleja de f3, dejando a la dama sin defensor cercano. Ahora entra el doblete de caballo.",
+        arrows: [{ from: "e1", to: "b1", color: "accent" }],
+        highlights: [
+          { square: "b1", color: "accent" },
+          { square: "f3", color: "warning" }
+        ],
+        variantes: [
+          {
+            titulo: "El doblete que justifica todo",
+            texto: "35. Kxb1 Nd2+ — jaque al rey y ataque a la dama a la vez. El rey tiene que moverse y en la siguiente jugada el caballo se cobra la dama.",
+            moves: ["Kxb1", "Nd2+", "Kb2", "Nxf3"]
+          }
+        ]
+      },
+      {
+        ply: 72,
+        titulo: "Cobro: cae la dama",
+        texto: "36... Cxf3. El caballo se cobra la dama. Balance de toda la combinación: ganamos calidad + peón, el rey blanco quedó en el rincón sin coordinación, y las piezas negras dominan todo el tablero. Un mate a corto plazo era inevitable — y llegó pocas jugadas después. Nada de esto se calcula en el tablero de la nada: se ve porque ya viste el patrón antes en 500 puzzles.",
+        arrows: [{ from: "d2", to: "f3", color: "accent" }],
+        highlights: [{ square: "f3", color: "accent" }]
+      }
+    ],
+    pgn: `[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2024.06.20"]
+[White "nekrs"]
+[Black "TinchoGraf"]
+[Result "0-1"]
+[WhiteElo "1705"]
+[BlackElo "1733"]
+[ECO "A45"]
+[TimeControl "180"]
+[Termination "TinchoGraf won by checkmate"]
+
+1. d4 Nf6 2. e3 e6 3. h3 b6 4. Ne2 Bb7 5. a3 Be7 6. Nbc3 O-O 7. b3 c5 8. Bb2 cxd4 9. Nxd4 Re8 10. Rg1 d6 11. Qd2 Ne4 12. Nxe4 Bxe4 13. Bd3 Bxd3 14. Qxd3 Bf6 15. O-O-O Nd7 16. Kb1 Nc5 17. Qd2 Ne4 18. Qe1 Qc7 19. f4 Rac8 20. Rc1 Nc3+ 21. Ka1 Ne4 22. g4 Bxd4 23. exd4 d5 24. g5 Qxf4 25. h4 g6 26. h5 a5 27. h6 a4 28. b4 Rc4 29. Qe2 Rec8 30. Rg4 Qxc1+ 31. Bxc1 Rxc2 32. Qd3 Rxc1+ 33. Kb2 Re1 34. Qf3 Rb1+ 35. Kxb1 Nd2+ 36. Kb2 Nxf3 37. Rf4 Nd2 38. Rf2 Ne4 39. Rg2 Rc3 40. Ka2 Rb3 41. Rc2 Nc3+ 42. Ka1 Rb1# 0-1`,
+    link_chesscom: "https://www.chess.com/analysis/collection/tacticas-ganadoras-2f8cLm98/3snk3o3MEW/analysis?move=59",
+    link_lichess: null
   }
 
   // ------------------------------------------------------------------
