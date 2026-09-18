@@ -3,8 +3,11 @@
    Tablero propio (Unicode + divs) + chess.js
    ============================================ */
 
+// Mismos glifos rellenos para ambos colores — el color/contorno lo da el CSS
+// (.cb__piece--white / .cb__piece--black), así las blancas se leen bien sobre
+// casillas claras y highlights en vez de perderse con el glifo de contorno.
 const PIECE_UNICODE = {
-  wK: "♔", wQ: "♕", wR: "♖", wB: "♗", wN: "♘", wP: "♙",
+  wK: "♚", wQ: "♛", wR: "♜", wB: "♝", wN: "♞", wP: "♟",
   bK: "♚", bQ: "♛", bR: "♜", bB: "♝", bN: "♞", bP: "♟"
 };
 const PIECE_NAMES = {
@@ -450,7 +453,8 @@ class ChessRenderer {
         const target = this.squares[sqName];
         if (!target) continue;
         const pieceEl = document.createElement("span");
-        pieceEl.className = "cb__piece cb__piece--" + piece[0];
+        const colorClass = piece[0] === "w" ? "cb__piece--white" : "cb__piece--black";
+        pieceEl.className = "cb__piece " + colorClass;
         pieceEl.dataset.piece = piece;
         pieceEl.textContent = PIECE_UNICODE[piece];
         if (this.draggable) pieceEl.draggable = true;
@@ -615,12 +619,13 @@ document.addEventListener("DOMContentLoaded", () => {
     updateKeyMoment(id, state);
   }
 
-  // Actualiza el box de "momento clave" + las flechas/highlights sobre el tablero según el ply actual.
-  // Prioridad: si hay una annotation para este ply, su contenido gana. Si no, y la partida NO tiene
-  // annotations, se usa el momento_clave "clásico" cuando el ply coincide. Si no hay match, se oculta.
+  // Actualiza el slot de comentario (narración general <-> box de momento clave) + las
+  // flechas/highlights sobre el tablero según el ply actual. Prioridad: si hay una annotation
+  // para este ply, su contenido gana. Si no, y la partida NO tiene annotations, se usa el
+  // momento_clave "clásico" cuando el ply coincide. Si no hay match, se muestra la narración.
   function updateKeyMoment(id, state) {
-    const box = document.getElementById(`keymoment-${id}`);
-    if (!box) return;
+    const slot = document.getElementById(`comment-${id}`);
+    if (!slot) return;
 
     const annotations = state.annotations || [];
     const annotation = annotations.find((a) => a.ply === state.ply);
@@ -630,8 +635,7 @@ document.addEventListener("DOMContentLoaded", () => {
         arrows: annotation.arrows || [],
         highlights: annotation.highlights || []
       });
-      setKeyMomentContent(id, annotation.titulo, annotation.texto);
-      box.classList.add("game__key-moment--visible");
+      renderCommentSlot(slot, "keymoment", annotation.titulo, annotation.texto);
       return;
     }
 
@@ -639,19 +643,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const momentoClave = state.momentoClave;
     if (momentoClave && annotations.length === 0 && state.ply === momentoClave.ply) {
-      setKeyMomentContent(id, null, momentoClave.comentario);
-      box.classList.add("game__key-moment--visible");
+      renderCommentSlot(slot, "keymoment", null, momentoClave.comentario);
       return;
     }
 
-    box.classList.remove("game__key-moment--visible");
+    renderCommentSlot(slot, "narrative", null, state.narracion);
   }
 
-  function setKeyMomentContent(id, titulo, texto) {
-    const titleEl = document.getElementById(`keymoment-title-${id}`);
-    const textEl = document.getElementById(`keymoment-text-${id}`);
-    if (titleEl) titleEl.textContent = titulo || "";
-    if (textEl) textEl.textContent = texto || "";
+  function renderCommentSlot(slot, kind, titulo, texto) {
+    if (kind === "keymoment") {
+      slot.innerHTML = `
+        <div class="game__key-moment game__key-moment--visible">
+          <p class="game__key-moment-title">${escapeHtml(titulo || "")}</p>
+          <p>${escapeHtml(texto || "")}</p>
+        </div>`;
+      return;
+    }
+    slot.innerHTML = texto ? `<p class="game__narrative">${escapeHtml(texto)}</p>` : "";
   }
 
   ["mejor-1", "mejor-2"].forEach(setupGameBoard);
@@ -698,7 +706,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="game__tag">${escapeHtml(partida.concepto)} · ${colorLabel}</span>
         <h3 class="game__title">${escapeHtml(partida.titulo)}</h3>
         <p class="game__meta">${escapeHtml(metaParts.join(" · "))}</p>
-        ${partida.narracion ? `<p class="game__narrative">${escapeHtml(partida.narracion)}</p>` : ""}
+        <div class="game__comment-slot" id="comment-${partida.id}"></div>
         <div class="game__controls">
           <button class="ctrl" data-action="start" data-target="${partida.id}" aria-label="Ir al inicio">⏮</button>
           <button class="ctrl" data-action="prev" data-target="${partida.id}" aria-label="Jugada anterior">◀</button>
@@ -711,11 +719,6 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>` : ""}
         <p class="game__move" id="move-${partida.id}">Posición inicial</p>
         <div class="game__legend" id="legend-${partida.id}"></div>
-        ${hasKeyBox ? `
-        <div class="game__key-moment" id="keymoment-${partida.id}">
-          <p class="game__key-moment-title" id="keymoment-title-${partida.id}"></p>
-          <p id="keymoment-text-${partida.id}"></p>
-        </div>` : ""}
         <div class="game__links">${links.join("")}</div>
       </div>
     `;
@@ -751,7 +754,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ply: 0,
       momentoClave,
       annotations,
-      keyMomentPly
+      keyMomentPly,
+      narracion: partida.narracion || ""
     };
     refreshGameBoard(partida.id);
   }

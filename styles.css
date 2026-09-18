@@ -369,12 +369,28 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   cursor: grab;
   line-height: 1;
   font-size: clamp(2.2rem, 7vw, 3.6rem);
-  /* Sombra sutil para legibilidad */
-  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
   transition: transform 0.05s;
 }
-.cb__piece--w { color: #fafaf7; text-shadow: 0 0 1px #000, 0 0 2px #000, 0 1px 2px rgba(0,0,0,0.4); }
-.cb__piece--b { color: #0a0a0a; }
+/* Mismo glifo relleno para ambos colores (ver PIECE_UNICODE en script.js):
+   se distinguen por color + contorno, no por el símbolo. */
+.cb__piece--black {
+  color: #0a0a0a;
+  text-shadow:
+    0 0 1px #fafaf7,
+    -1px -1px 0 rgba(250, 250, 247, 0.4),
+     1px  1px 0 rgba(250, 250, 247, 0.4);
+}
+.cb__piece--white {
+  color: #fafaf7;
+  /* Contorno negro para que se lean sobre casillas claras y highlights */
+  -webkit-text-stroke: 1px #0a0a0a;
+  text-shadow:
+    -1px -1px 0 #0a0a0a,
+     1px -1px 0 #0a0a0a,
+    -1px  1px 0 #0a0a0a,
+     1px  1px 0 #0a0a0a,
+     0    0   2px rgba(0, 0, 0, 0.3);
+}
 .cb__piece--dragging { opacity: 0.35; }
 .cb__piece:active { cursor: grabbing; transform: scale(1.05); }
 
@@ -649,6 +665,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   line-height: 1.5;
   color: #2a2a2a;
   margin-bottom: 1.5rem;
+}
+/* Un solo espacio para narración general o box de momento clave — nunca los dos a la vez.
+   min-height evita que la card "salte" al alternar entre un texto corto y uno largo. */
+.game__comment-slot {
+  min-height: 9.5rem;
 }
 .game__controls {
   display: flex; gap: 0.5rem;
