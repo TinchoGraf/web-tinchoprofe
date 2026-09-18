@@ -467,6 +467,105 @@ window.PARTIDAS_MODELO = [
 1. e4 e6 2. Nf3 c5 3. d4 cxd4 4. Nxd4 a6 5. c4 Nf6 6. Nc3 Qc7 7. Be3 Bb4 8. Bd3 Nc6 9. Nc2 Bxc3+ 10. bxc3 Ne5 11. O-O Nxc4 12. Bg5 Ne5 13. f4 Nxd3 14. Qxd3 Ng8 15. Rad1 Ne7 16. Bxe7 Kxe7 17. f5 e5 18. Nb4 Qc5+ 19. Kh1 Rd8 20. Qg3 Kf8 21. Qh4 1-0`,
     link_chesscom: "https://www.chess.com/analysis/collection/rey-en-el-centro-vs-cm-21Yb8HBn6/2VY6UEUft2/analysis?move=29",
     link_lichess: null
+  },
+  {
+    id: "ruptura-posicion-cerrada-sagat81-2024",
+    concepto: "Ruptura en posiciones cerradas",
+    titulo: "La importancia de romper la estructura cuando tenés espacio",
+    resultado: "0-1",
+    color_tincho: "negras",
+    oponente: "sagat81 (1902)",
+    fecha: "2024-10-15",
+    control: "Blitz 3+0",
+    narracion:
+      "En posiciones cerradas donde tenemos ventaja de espacio, la ruptura de peones es la que abre columnas para nuestras piezas y transforma la ventaja estática en ataque. Acá el negro juega un plan largo pero muy claro: primero cierra el centro con la estructura tipo India de Rey, después reagrupa la torre por g8 preparando la ruptura, ejecuta g5 abriendo el flanco de rey, y finalmente rompe con d4+ en el centro. Todo el bando blanco quedó pasivo, arrinconado, sin espacio para respirar — y las piezas negras entran solas.",
+    momento_clave: {
+      ply: 60,
+      comentario:
+        "30... d4+ — la ruptura central definitiva. Después de haber abierto ya el flanco de rey con g5, ahora rompemos el centro. El rey blanco queda en el fuego y las piezas blancas encerradas en la primera fila no pueden defender."
+    },
+    annotations: [
+      {
+        ply: 36,
+        titulo: "El plan sutil: preparar g5",
+        texto: "18... Tg8. Movida silenciosa pero clave — la torre se reagrupa para apoyar la ruptura g5 que viene. Este tipo de maniobras son típicas de la Defensa India de Rey: primero se maniobra sin hacer ruido, se acumulan piezas apuntando al flanco, y recién después se rompe. El blanco no ve venir el plan.",
+        arrows: [
+          { from: "f8", to: "g8", color: "accent" },
+          { from: "g8", to: "g5", color: "muted" }
+        ],
+        highlights: [
+          { square: "g8", color: "accent" },
+          { square: "g5", color: "warning" }
+        ]
+      },
+      {
+        ply: 39,
+        titulo: "Justo antes de romper",
+        texto: "20. Ce5. El blanco activa el caballo pero es tarde — la torre ya está en g8, el peón g está listo para avanzar, y todas las piezas negras del flanco de rey miran hacia el ataque. La estructura está por romperse.",
+        arrows: [{ from: "g7", to: "g5", color: "warning" }],
+        highlights: [
+          { square: "g5", color: "warning" },
+          { square: "e5", color: "muted" }
+        ]
+      },
+      {
+        ply: 40,
+        titulo: "Cambio y ruptura",
+        texto: "20... Axe5. Cambiamos el alfil por el caballo para eliminar la pieza defensora clave del flanco y abrir la columna g después de gxf4. Esto es lo que hace posible la ruptura — sin el caballo blanco en e5, nada frena el avance del peón g.",
+        arrows: [{ from: "f6", to: "e5", color: "accent" }],
+        highlights: [{ square: "e5", color: "accent" }]
+      },
+      {
+        ply: 51,
+        titulo: "El desespero blanco: rey al centro",
+        texto: "26. Re3. Notá lo que pasó — las torres blancas siguen en la primera fila, el caballo en a3 nunca movió, el alfil de dama arrinconado. El rey blanco sale al centro tratando de defender manualmente porque las piezas están todas atascadas. Es el síntoma clásico de haber perdido la partida por espacio.",
+        arrows: [{ from: "f3", to: "e3", color: "warning" }],
+        highlights: [
+          { square: "e3", color: "warning" },
+          { square: "a1", color: "muted" },
+          { square: "a3", color: "muted" },
+          { square: "d1", color: "muted" }
+        ]
+      },
+      {
+        ply: 60,
+        titulo: "Ruptura central: d4+",
+        texto: "30... d4+! El otro golpe, esta vez en el centro. El peón d avanza dando jaque descubierto contra el rey blanco. La estructura blanca ya no existe — todas las columnas centrales se abren y las piezas negras pueden entrar por donde quieran. El principio del final.",
+        arrows: [
+          { from: "d5", to: "d4", color: "accent" },
+          { from: "c6", to: "f3", color: "muted" }
+        ],
+        highlights: [
+          { square: "d4", color: "accent" },
+          { square: "f3", color: "warning" }
+        ]
+      },
+      {
+        ply: 76,
+        titulo: "Cierre: mate por la ruptura",
+        texto: "38... Df2#. Después de la ruptura central el peón d avanzó imparable hasta d2, y la dama entra dando mate en f2 con el rey blanco encerrado por sus propias piezas — el alfil que nunca desarrolló, el caballo dormido en a3. Todo el ataque nació de dos rupturas: g5 en el flanco y d4+ en el centro. Sin espacio y sin desarrollo, no hay defensa posible.",
+        arrows: [{ from: "b6", to: "f2", color: "accent" }],
+        highlights: [
+          { square: "f2", color: "accent" },
+          { square: "f3", color: "warning" }
+        ]
+      }
+    ],
+    pgn: `[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2024.10.15"]
+[White "sagat81"]
+[Black "TinchoGraf"]
+[Result "0-1"]
+[WhiteElo "1902"]
+[BlackElo "1839"]
+[ECO "D00"]
+[TimeControl "180"]
+[Termination "TinchoGraf won by checkmate"]
+
+1. f4 d5 2. d4 Nf6 3. Nf3 c5 4. e3 Nc6 5. c3 Ne4 6. Bd3 e6 7. O-O Be7 8. Qc2 f5 9. a3 c4 10. Be2 O-O 11. b4 Bf6 12. a4 a6 13. a5 Na7 14. Na3 Bd7 15. Bd2 Bb5 16. Be1 Qd7 17. Bd1 Kh8 18. Ra2 Rg8 19. g3 g5 20. Ne5 Bxe5 21. dxe5 gxf4 22. exf4 Rg6 23. Kh1 Rh6 24. Kg2 Rg8 25. Kf3 Bc6 26. Ke3 Rh3 27. Rg1 Rd8 28. Kd4 Bb5 29. Rg2 Nc6+ 30. Ke3 d4+ 31. Kf3 d3 32. Qc1 Qd5 33. Ke3 Nxa5 34. Nxb5 34... Qxb5 35. Rxa5 Qb6+ 36. Kf3 d2 37. Rxd2 Rxd2 38. Bxd2 Qf2# 0-1`,
+    link_chesscom: "https://www.chess.com/analysis/collection/ventaja-de-espacio-en-pos-cerradas-2PPBVBenS/39CYiSBNRk/analysis?move=59",
+    link_lichess: null
   }
 
   // ------------------------------------------------------------------
