@@ -21,7 +21,7 @@
       <span class="nav__logo-mark">♞</span>
       <span class="nav__logo-text">tinchograf</span>
     </a>
-    <nav class="nav__links">
+    <nav class="nav__links" id="nav-links">
       <a href="#biografia">Biografía</a>
       <a href="#conceptos">Conceptos</a>
       <a href="#tablero">Tablero</a>
@@ -29,7 +29,7 @@
       <a href="#mejores">Mejores partidas</a>
       <a href="#contacto">Contacto</a>
     </nav>
-    <button class="nav__toggle" aria-label="Abrir menú">
+    <button class="nav__toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
       <span></span><span></span><span></span>
     </button>
   </header>
@@ -182,21 +182,21 @@
       <div class="analysis__board-wrap">
         <div class="analysis__board" id="analysis-board"></div>
         <div class="analysis__tools">
-          <button class="ctrl" id="an-start" title="Inicio">⏮</button>
-          <button class="ctrl" id="an-prev" title="Anterior">◀</button>
-          <button class="ctrl" id="an-next" title="Siguiente">▶</button>
-          <button class="ctrl" id="an-end" title="Final">⏭</button>
-          <button class="ctrl" id="an-flip" title="Girar tablero">⇅</button>
+          <button class="ctrl" id="an-start" title="Inicio" aria-label="Ir al inicio">⏮</button>
+          <button class="ctrl" id="an-prev" title="Anterior" aria-label="Jugada anterior">◀</button>
+          <button class="ctrl" id="an-next" title="Siguiente" aria-label="Jugada siguiente">▶</button>
+          <button class="ctrl" id="an-end" title="Final" aria-label="Ir al final">⏭</button>
+          <button class="ctrl" id="an-flip" title="Girar tablero" aria-label="Girar tablero">⇅</button>
           <button class="ctrl ctrl--wide" id="an-reset" title="Reiniciar">Reiniciar</button>
         </div>
       </div>
 
       <aside class="analysis__panel">
-        <div class="analysis__status" id="an-status">Turno: blancas</div>
+        <div class="analysis__status" id="an-status" aria-live="polite">Turno: blancas</div>
 
         <div class="analysis__notation-head">
           <span>Notación</span>
-          <button class="analysis__copy" id="an-copy" title="Copiar PGN">Copiar PGN</button>
+          <button class="analysis__copy" id="an-copy" title="Copiar PGN" aria-live="polite">Copiar PGN</button>
         </div>
         <div class="analysis__notation" id="an-notation">
           <p class="analysis__empty">Mové una pieza para empezar.</p>
@@ -235,10 +235,10 @@
           <h3 class="game__title">Ejemplo: estructura sobre teoría</h3>
           <p class="game__meta">Tinchograf vs. Oponente · Online</p>
           <div class="game__controls">
-            <button class="ctrl" data-action="start" data-target="ejemplo-1">⏮</button>
-            <button class="ctrl" data-action="prev" data-target="ejemplo-1">◀</button>
-            <button class="ctrl" data-action="next" data-target="ejemplo-1">▶</button>
-            <button class="ctrl" data-action="end" data-target="ejemplo-1">⏭</button>
+            <button class="ctrl" data-action="start" data-target="ejemplo-1" aria-label="Ir al inicio">⏮</button>
+            <button class="ctrl" data-action="prev" data-target="ejemplo-1" aria-label="Jugada anterior">◀</button>
+            <button class="ctrl" data-action="next" data-target="ejemplo-1" aria-label="Jugada siguiente">▶</button>
+            <button class="ctrl" data-action="end" data-target="ejemplo-1" aria-label="Ir al final">⏭</button>
           </div>
           <p class="game__move" id="move-ejemplo-1">Posición inicial</p>
           <div class="game__legend" id="legend-ejemplo-1"></div>
@@ -256,10 +256,10 @@
           <h3 class="game__title">Ejemplo: leer la posición</h3>
           <p class="game__meta">Tinchograf vs. Oponente · Online</p>
           <div class="game__controls">
-            <button class="ctrl" data-action="start" data-target="ejemplo-2">⏮</button>
-            <button class="ctrl" data-action="prev" data-target="ejemplo-2">◀</button>
-            <button class="ctrl" data-action="next" data-target="ejemplo-2">▶</button>
-            <button class="ctrl" data-action="end" data-target="ejemplo-2">⏭</button>
+            <button class="ctrl" data-action="start" data-target="ejemplo-2" aria-label="Ir al inicio">⏮</button>
+            <button class="ctrl" data-action="prev" data-target="ejemplo-2" aria-label="Jugada anterior">◀</button>
+            <button class="ctrl" data-action="next" data-target="ejemplo-2" aria-label="Jugada siguiente">▶</button>
+            <button class="ctrl" data-action="end" data-target="ejemplo-2" aria-label="Ir al final">⏭</button>
           </div>
           <p class="game__move" id="move-ejemplo-2">Posición inicial</p>
           <div class="game__legend" id="legend-ejemplo-2"></div>
@@ -291,10 +291,10 @@
           <h3 class="game__title">Partida #1</h3>
           <p class="game__meta">Tinchograf · Plataforma online</p>
           <div class="game__controls">
-            <button class="ctrl" data-action="start" data-target="mejor-1">⏮</button>
-            <button class="ctrl" data-action="prev" data-target="mejor-1">◀</button>
-            <button class="ctrl" data-action="next" data-target="mejor-1">▶</button>
-            <button class="ctrl" data-action="end" data-target="mejor-1">⏭</button>
+            <button class="ctrl" data-action="start" data-target="mejor-1" aria-label="Ir al inicio">⏮</button>
+            <button class="ctrl" data-action="prev" data-target="mejor-1" aria-label="Jugada anterior">◀</button>
+            <button class="ctrl" data-action="next" data-target="mejor-1" aria-label="Jugada siguiente">▶</button>
+            <button class="ctrl" data-action="end" data-target="mejor-1" aria-label="Ir al final">⏭</button>
           </div>
           <p class="game__move" id="move-mejor-1">Posición inicial</p>
           <div class="game__legend" id="legend-mejor-1"></div>
@@ -312,10 +312,10 @@
           <h3 class="game__title">Partida #2</h3>
           <p class="game__meta">Tinchograf · Plataforma online</p>
           <div class="game__controls">
-            <button class="ctrl" data-action="start" data-target="mejor-2">⏮</button>
-            <button class="ctrl" data-action="prev" data-target="mejor-2">◀</button>
-            <button class="ctrl" data-action="next" data-target="mejor-2">▶</button>
-            <button class="ctrl" data-action="end" data-target="mejor-2">⏭</button>
+            <button class="ctrl" data-action="start" data-target="mejor-2" aria-label="Ir al inicio">⏮</button>
+            <button class="ctrl" data-action="prev" data-target="mejor-2" aria-label="Jugada anterior">◀</button>
+            <button class="ctrl" data-action="next" data-target="mejor-2" aria-label="Jugada siguiente">▶</button>
+            <button class="ctrl" data-action="end" data-target="mejor-2" aria-label="Ir al final">⏭</button>
           </div>
           <p class="game__move" id="move-mejor-2">Posición inicial</p>
           <div class="game__legend" id="legend-mejor-2"></div>
@@ -345,8 +345,7 @@
         <ul class="contact__channels">
           <li>
             <span class="channel__label">Mail</span>
-            <a href="mailto:[email protected]">[email protected]</a>
-            <small>(reemplazar por el mail real)</small>
+            <a href="mailto:tinchografdev@gmail.com">tinchografdev@gmail.com</a>
           </li>
           <li>
             <span class="channel__label">Instagram</span>
@@ -365,10 +364,10 @@
         <div class="contact__instagram">
           <h3>Últimos posts</h3>
           <div class="ig-grid">
-            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile">IG</a>
-            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile">IG</a>
-            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile">IG</a>
-            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile">IG</a>
+            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile" aria-label="Ver publicación 1 en Instagram">IG</a>
+            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile" aria-label="Ver publicación 2 en Instagram">IG</a>
+            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile" aria-label="Ver publicación 3 en Instagram">IG</a>
+            <a href="https://instagram.com/tinchograf" target="_blank" rel="noopener" class="ig-tile" aria-label="Ver publicación 4 en Instagram">IG</a>
           </div>
           <p class="ig-note">
             <small>Cuando la cuenta esté activa, reemplazamos esto por el feed real (widget de Instagram o capturas con links a cada post).</small>
@@ -376,7 +375,7 @@
         </div>
       </div>
 
-      <form class="contact__form" id="contact-form" novalidate>
+      <form class="contact__form" id="contact-form" aria-describedby="form-status">
         <h3>Mandame un mensaje</h3>
         <label>
           <span>Nombre</span>
@@ -388,7 +387,8 @@
         </label>
         <label>
           <span>Nivel actual</span>
-          <select name="level">
+          <select name="level" required>
+            <option value="" disabled selected>Seleccioná tu nivel</option>
             <option>Principiante</option>
             <option>Intermedio</option>
             <option>Avanzado</option>
@@ -400,7 +400,7 @@
           <textarea name="message" rows="5" required></textarea>
         </label>
         <button type="submit" class="btn btn--primary">Enviar</button>
-        <p class="form__status" id="form-status"></p>
+        <p class="form__status" id="form-status" aria-live="polite"></p>
       </form>
     </div>
   </section>
@@ -408,13 +408,13 @@
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <div class="footer__inner">
-      <p>© <span id="year"></span> Tinchograf · El ajedrez como yo lo veo.</p>
+      <p>© <span id="year">2026</span> Tinchograf · El ajedrez como yo lo veo.</p>
       <p class="footer__small">Hecho con HTML, CSS y JS.</p>
     </div>
   </footer>
 
   <!-- chess.js: motor de validación de jugadas. Archivo local, no depende del CDN. -->
-  <script src="chess.min.js"></script>
-  <script src="script.js"></script>
+  <script src="chess.min.js" defer></script>
+  <script src="script.js" defer></script>
 </body>
 </html>

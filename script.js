@@ -7,6 +7,10 @@ const PIECE_UNICODE = {
   wK: "♔", wQ: "♕", wR: "♖", wB: "♗", wN: "♘", wP: "♙",
   bK: "♚", bQ: "♛", bR: "♜", bB: "♝", bN: "♞", bP: "♟"
 };
+const PIECE_NAMES = {
+  wK: "rey blanco", wQ: "dama blanca", wR: "torre blanca", wB: "alfil blanco", wN: "caballo blanco", wP: "peón blanco",
+  bK: "rey negro", bQ: "dama negra", bR: "torre negra", bB: "alfil negro", bN: "caballo negro", bP: "peón negro"
+};
 const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
 const ARROW_COLORS = {
@@ -48,6 +52,7 @@ class ChessRenderer {
     this.canDragPiece = options.canDragPiece || null;
     this.legalMovesFor = null;
     this.squares = {};
+    this.squarePositions = {};
     this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
     this.draggedFrom = null;
     this.selectedSquare = null;
@@ -55,6 +60,7 @@ class ChessRenderer {
     this.arrowDrawing = null;
     this.arrowLayer = null;
     this.arrowMarkerId = "cb-arrowhead-" + containerId;
+    this.focusedSquare = this.draggable ? "e1" : null;
     if (this.draggable) {
       this.container.addEventListener("contextmenu", (e) => e.preventDefault());
       document.addEventListener("mouseup", (e) => {
@@ -68,7 +74,12 @@ class ChessRenderer {
     this.container.innerHTML = "";
     const grid = document.createElement("div");
     grid.className = "cb__grid";
+    if (this.draggable) {
+      grid.setAttribute("role", "grid");
+      grid.setAttribute("aria-label", "Tablero de ajedrez, usá las flechas para moverte y Enter para seleccionar o mover");
+    }
     this.squares = {};
+    this.squarePositions = {};
 
     for (let visualRow = 0; visualRow < 8; visualRow++) {
       for (let visualCol = 0; visualCol < 8; visualCol++) {
@@ -80,6 +91,11 @@ class ChessRenderer {
         const lightSquare = (visualRow + visualCol) % 2 === 0;
         sq.className = "cb__sq " + (lightSquare ? "cb__sq--light" : "cb__sq--dark");
         sq.dataset.square = sqName;
+
+        if (this.draggable) {
+          sq.setAttribute("role", "gridcell");
+          sq.tabIndex = sqName === this.focusedSquare ? 0 : -1;
+        }
 
         if (visualCol === 0) {
           const r = document.createElement("span");
@@ -100,6 +116,7 @@ class ChessRenderer {
         }
         grid.appendChild(sq);
         this.squares[sqName] = sq;
+        this.squarePositions[sqName] = { row: visualRow, col: visualCol };
       }
     }
     this.container.appendChild(grid);
@@ -147,24 +164,63 @@ class ChessRenderer {
     });
 
     // Click-to-move
-    sq.addEventListener("click", () => {
-      this.clearArrows();
-      if (this.selectedSquare && this.selectedSquare !== sqName) {
-        const from = this.selectedSquare;
-        this.clearSelection();
-        if (this.onMove) this.onMove(from, sqName);
-        return;
-      }
-      const pieceEl = sq.querySelector(".cb__piece");
-      if (pieceEl) {
-        if (this.canDragPiece && !this.canDragPiece(pieceEl.dataset.piece, sqName)) return;
-        this.selectedSquare = sqName;
-        sq.classList.add("cb__sq--selected");
-        this.highlightLegalMoves(sqName);
-      } else {
-        this.clearSelection();
+    sq.addEventListener("click", () => this.activateSquare(sqName));
+
+    // Navegación por teclado (flechas para mover el foco, Enter/Espacio para seleccionar o mover)
+    sq.addEventListener("keydown", (e) => {
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        e.preventDefault();
+        this.moveFocus(sqName, e.key);
+      } else if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        this.activateSquare(sqName);
       }
     });
+  }
+
+  activateSquare(sqName) {
+    const sq = this.squares[sqName];
+    this.clearArrows();
+    if (this.selectedSquare && this.selectedSquare !== sqName) {
+      const from = this.selectedSquare;
+      this.clearSelection();
+      if (this.onMove) this.onMove(from, sqName);
+      return;
+    }
+    const pieceEl = sq.querySelector(".cb__piece");
+    if (pieceEl) {
+      if (this.canDragPiece && !this.canDragPiece(pieceEl.dataset.piece, sqName)) return;
+      this.selectedSquare = sqName;
+      sq.classList.add("cb__sq--selected");
+      this.highlightLegalMoves(sqName);
+    } else {
+      this.clearSelection();
+    }
+  }
+
+  moveFocus(fromSquare, key) {
+    const pos = this.squarePositions[fromSquare];
+    if (!pos) return;
+    let { row, col } = pos;
+    if (key === "ArrowUp") row = Math.max(0, row - 1);
+    else if (key === "ArrowDown") row = Math.min(7, row + 1);
+    else if (key === "ArrowLeft") col = Math.max(0, col - 1);
+    else if (key === "ArrowRight") col = Math.min(7, col + 1);
+    const target = Object.entries(this.squarePositions)
+      .find(([, p]) => p.row === row && p.col === col);
+    if (target) this.focusSquare(target[0]);
+  }
+
+  focusSquare(sqName) {
+    if (this.focusedSquare && this.squares[this.focusedSquare]) {
+      this.squares[this.focusedSquare].tabIndex = -1;
+    }
+    this.focusedSquare = sqName;
+    const el = this.squares[sqName];
+    if (el) {
+      el.tabIndex = 0;
+      el.focus();
+    }
   }
 
   setLegalMovesProvider(fn) { this.legalMovesFor = fn; }
@@ -282,8 +338,9 @@ class ChessRenderer {
   setPosition(fen) {
     this.fen = fen;
     const matrix = fenToBoard(fen);
-    Object.values(this.squares).forEach((sq) => {
+    Object.entries(this.squares).forEach(([sqName, sq]) => {
       sq.querySelectorAll(".cb__piece").forEach((p) => p.remove());
+      sq.setAttribute("aria-label", `${sqName}, vacío`);
     });
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
@@ -298,6 +355,7 @@ class ChessRenderer {
         pieceEl.textContent = PIECE_UNICODE[piece];
         if (this.draggable) pieceEl.draggable = true;
         target.appendChild(pieceEl);
+        target.setAttribute("aria-label", `${sqName}, ${PIECE_NAMES[piece]}`);
       }
     }
   }
@@ -342,9 +400,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const toggle = document.querySelector(".nav__toggle");
   const links = document.querySelector(".nav__links");
-  toggle?.addEventListener("click", () => links.classList.toggle("nav__links--open"));
+  const setMenuOpen = (open) => {
+    links.classList.toggle("nav__links--open", open);
+    toggle.setAttribute("aria-expanded", String(open));
+    toggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+  };
+  toggle?.addEventListener("click", () => setMenuOpen(!links.classList.contains("nav__links--open")));
   links?.querySelectorAll("a").forEach((a) => {
-    a.addEventListener("click", () => links.classList.remove("nav__links--open"));
+    a.addEventListener("click", () => setMenuOpen(false));
   });
 
   if (!ensureChessLoaded()) return;
@@ -626,6 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
     const tag = document.activeElement?.tagName;
     if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    if (document.activeElement?.classList.contains("cb__sq")) return;
 
     const candidates = [];
     Object.entries(boards).forEach(([id]) => {
@@ -664,16 +728,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const email = fd.get("email")?.toString().trim();
     const level = fd.get("level")?.toString();
     const message = fd.get("message")?.toString().trim();
-    if (!name || !email || !message) {
-      status.textContent = "Faltan datos. Completá nombre, email y mensaje.";
+    if (!name || !email || !level || !message) {
+      status.textContent = "Faltan datos. Completá nombre, email, nivel y mensaje.";
       status.style.color = "#ff8a8a";
       return;
     }
+    const contactLink = document.querySelector('.contact__channels a[href^="mailto:"]');
+    const contactEmail = contactLink ? contactLink.getAttribute("href").replace("mailto:", "").split("?")[0] : "";
     const subject = encodeURIComponent(`Consulta de clases — ${name}`);
     const body = encodeURIComponent(
       `Nombre: ${name}\nEmail: ${email}\nNivel: ${level}\n\nMensaje:\n${message}`
     );
-    window.location.href = `mailto:[email protected]?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`;
     status.textContent = "Abriendo tu cliente de mail...";
     status.style.color = "#9ad19a";
   });
