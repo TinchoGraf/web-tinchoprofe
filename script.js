@@ -20,6 +20,19 @@ const ARROW_COLORS = {
   blue: "rgba(30, 100, 200, 0.85)"
 };
 
+// Colores para anotaciones de partidas modelo (flechas + casillas resaltadas).
+// Ligados a las variables CSS --arrow-*/--hl-* para mantener una sola fuente de verdad.
+const ANNOTATION_ARROW_COLORS = {
+  accent: "var(--arrow-accent)",
+  muted: "var(--arrow-muted)",
+  warning: "var(--arrow-warning)"
+};
+const ANNOTATION_HIGHLIGHT_COLORS = {
+  accent: "var(--hl-accent)",
+  muted: "var(--hl-muted)",
+  warning: "var(--hl-warning)"
+};
+
 function fenToBoard(fen) {
   const rows = fen.split(" ")[0].split("/");
   const board = [];
@@ -60,6 +73,10 @@ class ChessRenderer {
     this.arrowDrawing = null;
     this.arrowLayer = null;
     this.arrowMarkerId = "cb-arrowhead-" + containerId;
+    this.overlay = null;
+    this.overlayMarkerId = "cb-overlay-arrowhead-" + containerId;
+    this.annotationArrows = [];
+    this.annotationHighlights = [];
     this.focusedSquare = this.draggable ? "e1" : null;
     if (this.draggable) {
       this.container.addEventListener("contextmenu", (e) => e.preventDefault());
@@ -123,6 +140,8 @@ class ChessRenderer {
     this.setPosition(this.fen);
     this.buildArrowLayer();
     this.renderArrows();
+    this.buildOverlay();
+    this.renderAnnotation();
   }
 
   attachDragHandlers(sq, sqName) {
@@ -256,13 +275,21 @@ class ChessRenderer {
     this.arrowLayer = svg;
   }
 
-  squareCenter(sqName) {
+  // "e4" -> { x, y } esquina superior-izquierda de la casilla en el espacio del viewBox (0-8),
+  // respetando this.flipped.
+  squareToXY(sqName) {
     const fileIdx = FILES.indexOf(sqName[0]);
     const rank = parseInt(sqName.slice(1), 10);
     if (fileIdx < 0 || !rank) return null;
-    const visualCol = this.flipped ? 7 - fileIdx : fileIdx;
-    const visualRow = this.flipped ? rank - 1 : 8 - rank;
-    return { x: visualCol + 0.5, y: visualRow + 0.5 };
+    const col = this.flipped ? 7 - fileIdx : fileIdx;
+    const row = this.flipped ? rank - 1 : 8 - rank;
+    return { x: col, y: row };
+  }
+
+  squareCenter(sqName) {
+    const xy = this.squareToXY(sqName);
+    if (!xy) return null;
+    return { x: xy.x + 0.5, y: xy.y + 0.5 };
   }
 
   toggleArrow(from, to) {
@@ -307,6 +334,79 @@ class ChessRenderer {
       line.setAttribute("stroke", ARROW_COLORS[colorName]);
       line.setAttribute("marker-end", `url(#${this.arrowMarkerId}-${colorName})`);
       this.arrowLayer.appendChild(line);
+    });
+  }
+
+  // Overlay de anotaciones de partidas modelo: flechas + casillas resaltadas
+  // para ilustrar una secuencia táctica (independiente de las flechas libres de análisis).
+  buildOverlay() {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "cb__overlay");
+    svg.setAttribute("viewBox", "0 0 8 8");
+    svg.setAttribute("preserveAspectRatio", "none");
+    const markers = Object.entries(ANNOTATION_ARROW_COLORS).map(([name, value]) => `
+      <marker id="${this.overlayMarkerId}-${name}" markerWidth="2.6" markerHeight="2.6"
+              refX="1.3" refY="1.3" orient="auto-start-reverse" markerUnits="strokeWidth">
+        <path d="M0,0 L2.6,1.3 L0,2.6 Z" fill="${value}" />
+      </marker>`).join("");
+    svg.innerHTML = `<defs>${markers}</defs>`;
+    this.container.appendChild(svg);
+    this.overlay = svg;
+  }
+
+  showAnnotation({ arrows = [], highlights = [] } = {}) {
+    this.annotationArrows = Array.isArray(arrows) ? arrows : [];
+    this.annotationHighlights = Array.isArray(highlights) ? highlights : [];
+    this.renderAnnotation();
+  }
+
+  clearAnnotation() {
+    if (this.annotationArrows.length === 0 && this.annotationHighlights.length === 0) return;
+    this.annotationArrows = [];
+    this.annotationHighlights = [];
+    this.renderAnnotation();
+  }
+
+  renderAnnotation() {
+    if (!this.overlay) return;
+    this.overlay.querySelectorAll(".cb__overlay-shape").forEach((el) => el.remove());
+    const ns = "http://www.w3.org/2000/svg";
+
+    // Casillas resaltadas primero, para que las flechas queden por encima.
+    this.annotationHighlights.forEach(({ square, color }) => {
+      const xy = this.squareToXY(square);
+      if (!xy) return;
+      const colorName = ANNOTATION_HIGHLIGHT_COLORS[color] ? color : "accent";
+      const rect = document.createElementNS(ns, "rect");
+      rect.setAttribute("x", xy.x + 0.04);
+      rect.setAttribute("y", xy.y + 0.04);
+      rect.setAttribute("width", 0.92);
+      rect.setAttribute("height", 0.92);
+      rect.setAttribute("class", "cb__overlay-shape cb__overlay-highlight");
+      rect.setAttribute("fill", ANNOTATION_HIGHLIGHT_COLORS[colorName]);
+      rect.setAttribute("stroke", ANNOTATION_ARROW_COLORS[colorName]);
+      this.overlay.appendChild(rect);
+    });
+
+    this.annotationArrows.forEach(({ from, to, color }) => {
+      const a = this.squareCenter(from);
+      const b = this.squareCenter(to);
+      if (!a || !b) return;
+      const colorName = ANNOTATION_ARROW_COLORS[color] ? color : "accent";
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const pullback = 0.34;
+      const endX = b.x - (dx / dist) * pullback;
+      const endY = b.y - (dy / dist) * pullback;
+      const line = document.createElementNS(ns, "line");
+      line.setAttribute("x1", a.x);
+      line.setAttribute("y1", a.y);
+      line.setAttribute("x2", endX);
+      line.setAttribute("y2", endY);
+      line.setAttribute("class", "cb__overlay-shape cb__overlay-arrow");
+      line.setAttribute("stroke", ANNOTATION_ARROW_COLORS[colorName]);
+      line.setAttribute("marker-end", `url(#${this.overlayMarkerId}-${colorName})`);
+      this.overlay.appendChild(line);
     });
   }
 
@@ -512,11 +612,46 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const keyMomentBox = document.getElementById(`keymoment-${id}`);
-    if (keyMomentBox) {
-      const atKeyMoment = state.keyMomentPly !== undefined && state.ply === state.keyMomentPly;
-      keyMomentBox.classList.toggle("game__key-moment--visible", atKeyMoment);
+    updateKeyMoment(id, state);
+  }
+
+  // Actualiza el box de "momento clave" + las flechas/highlights sobre el tablero según el ply actual.
+  // Prioridad: si hay una annotation para este ply, su contenido gana. Si no, y la partida NO tiene
+  // annotations, se usa el momento_clave "clásico" cuando el ply coincide. Si no hay match, se oculta.
+  function updateKeyMoment(id, state) {
+    const box = document.getElementById(`keymoment-${id}`);
+    if (!box) return;
+
+    const annotations = state.annotations || [];
+    const annotation = annotations.find((a) => a.ply === state.ply);
+
+    if (annotation) {
+      state.renderer.showAnnotation({
+        arrows: annotation.arrows || [],
+        highlights: annotation.highlights || []
+      });
+      setKeyMomentContent(id, annotation.titulo, annotation.texto);
+      box.classList.add("game__key-moment--visible");
+      return;
     }
+
+    state.renderer.clearAnnotation();
+
+    const momentoClave = state.momentoClave;
+    if (momentoClave && annotations.length === 0 && state.ply === momentoClave.ply) {
+      setKeyMomentContent(id, null, momentoClave.comentario);
+      box.classList.add("game__key-moment--visible");
+      return;
+    }
+
+    box.classList.remove("game__key-moment--visible");
+  }
+
+  function setKeyMomentContent(id, titulo, texto) {
+    const titleEl = document.getElementById(`keymoment-title-${id}`);
+    const textEl = document.getElementById(`keymoment-text-${id}`);
+    if (titleEl) titleEl.textContent = titulo || "";
+    if (textEl) textEl.textContent = texto || "";
   }
 
   ["mejor-1", "mejor-2"].forEach(setupGameBoard);
@@ -550,6 +685,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const fechaTxt = formatFechaEs(partida.fecha);
     if (fechaTxt) metaParts.push(fechaTxt);
 
+    // El box de "momento clave" existe si hay momento_clave clásico y/o annotations por ply.
+    const hasKeyBox = !!(partida.momento_clave || (Array.isArray(partida.annotations) && partida.annotations.length));
+
     const links = [];
     if (partida.link_chesscom) links.push(`<a href="${partida.link_chesscom}" target="_blank" rel="noopener">chess.com ↗</a>`);
     if (partida.link_lichess) links.push(`<a href="${partida.link_lichess}" target="_blank" rel="noopener">lichess ↗</a>`);
@@ -567,15 +705,16 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="ctrl" data-action="next" data-target="${partida.id}" aria-label="Jugada siguiente">▶</button>
           <button class="ctrl" data-action="end" data-target="${partida.id}" aria-label="Ir al final">⏭</button>
         </div>
-        ${partida.momento_clave ? `
+        ${hasKeyBox ? `
         <div class="game__keymoment-row">
           <button class="btn btn--ghost-sm game__keymoment-btn" data-target="${partida.id}">Ir al momento clave</button>
         </div>` : ""}
         <p class="game__move" id="move-${partida.id}">Posición inicial</p>
         <div class="game__legend" id="legend-${partida.id}"></div>
-        ${partida.momento_clave ? `
+        ${hasKeyBox ? `
         <div class="game__key-moment" id="keymoment-${partida.id}">
-          <p>${escapeHtml(partida.momento_clave.comentario)}</p>
+          <p class="game__key-moment-title" id="keymoment-title-${partida.id}"></p>
+          <p id="keymoment-text-${partida.id}"></p>
         </div>` : ""}
         <div class="game__links">${links.join("")}</div>
       </div>
@@ -600,12 +739,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // El tablero se ve desde el ángulo de Tincho: su color siempre queda abajo.
     const flipped = partida.color_tincho === "negras";
     const renderer = new ChessRenderer(`board-${partida.id}`, { draggable: false, flipped });
+    const annotations = Array.isArray(partida.annotations) ? partida.annotations : [];
+    const momentoClave = partida.momento_clave || null;
+    // El botón "Ir al momento clave" salta al momento_clave clásico o, si no hay,
+    // a la primera annotation por convención.
+    const keyMomentPly = momentoClave ? momentoClave.ply : (annotations[0] ? annotations[0].ply : undefined);
     boards[partida.id] = {
       renderer,
       positions,
       sanMoves,
       ply: 0,
-      keyMomentPly: partida.momento_clave ? partida.momento_clave.ply : undefined
+      momentoClave,
+      annotations,
+      keyMomentPly
     };
     refreshGameBoard(partida.id);
   }

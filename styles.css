@@ -12,6 +12,14 @@
   --accent: #8b1a1a;        /* bordó editorial */
   --accent-soft: #c44545;
 
+  /* Flechas y highlights de anotaciones sobre el tablero */
+  --arrow-accent: #8b1a1a;
+  --arrow-muted: #6b6b6b;
+  --arrow-warning: #b8860b;  /* ocre editorial */
+  --hl-accent: rgba(139, 26, 26, 0.35);
+  --hl-muted: rgba(107, 107, 107, 0.3);
+  --hl-warning: rgba(184, 134, 11, 0.35);
+
   --serif: "Cormorant Garamond", "Times New Roman", serif;
   --sans: "Inter Tight", -apple-system, sans-serif;
 
@@ -411,6 +419,21 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   stroke-linecap: round;
 }
 
+/* Overlay de anotaciones de partidas modelo (flechas + casillas resaltadas) */
+.cb__overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.cb__overlay-arrow {
+  stroke-width: 0.15;
+  stroke-linecap: round;
+}
+.cb__overlay-highlight {
+  stroke-width: 0.05;
+}
+
 /* Layout de la sección de análisis */
 .analysis {
   display: grid;
@@ -680,6 +703,17 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   margin-bottom: 1.5rem;
 }
 .game__key-moment--visible { display: block; }
+.game__key-moment .game__key-moment-title {
+  font-family: var(--sans);
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.game__key-moment .game__key-moment-title:empty { display: none; }
 .game__key-moment p {
   font-family: var(--serif);
   font-style: italic;
